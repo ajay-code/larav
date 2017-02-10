@@ -83,7 +83,11 @@ class HomeController extends Controller
 
         $productCopy = $product->replicate();
 
+//        $product->tagNames();
         $productCopy->save();
+
+
+        $productCopy->tag($product->tagNames());
 
         foreach ($product->photos as $photo){
             $productCopy->photos()->save($photo->replicate());
