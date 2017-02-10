@@ -1,0 +1,64 @@
+.primary-image .imgBox {
+    width: 100%;
+    height: 100%;
+}
+.primary-image.imgBox input{
+    height: 300px;
+}
+.imgBox {
+    position: relative;
+    overflow: hidden;
+    background-color: #ffffff;
+    color: #ecf0f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imgBox input {
+    // line-height: 100px;
+    // font-size: 100px;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 1000000;
+    cursor: pointer;
+}
+
+.imgBox label {
+    position: absolute;
+    z-index: 5;
+    opacity: 0.8;
+    cursor: pointer;
+    width: 100px;
+    height: 50px;
+    font-size: 100px;
+    line-height: 50px;
+    text-transform: uppercase;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.indi-image input {
+    
+}
+
+.indi-image label {
+    width: 60px;
+    height: 25px;
+    font-size: 30px;
+    line-height: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input.image-upload{
+    cursor: pointer;
+}

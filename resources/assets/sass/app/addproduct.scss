@@ -1,0 +1,86 @@
+/*Add Product*/
+
+.add-wish-head {
+  font-family: abel;
+  font-size: 29px;
+  font-weight: normal;
+  color: #FE980F;
+}
+
+/* Left Hand Side of the Wish-form */
+
+.primary-image {
+  min-height: 309px;
+  border: 1px solid #ccc;
+  margin-bottom: 19px;
+  &:hover{
+    border-color: #FE980F;
+  }
+}
+
+// Upload Image Preview
+.secondary-images-show {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.indi-image {
+  width: 24%;
+  display: inline-block;
+  border: 1px solid #ccc;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &:hover{
+    border-color: #FE980F;
+  }
+}
+
+/* Right Hand Side of the Wish-form */
+
+
+#wish-form {
+  margin: 20px auto;
+
+  .input-tags {
+    padding: 0;
+    .selectize-control.form-control.multi {
+      padding: 0;
+      .selectize-input {
+        min-height: 46px;
+
+        &:hover {
+          border-color: #FDB45E;
+        }
+      }
+      .focus {
+        border-color: #FDB45E;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.form-control {
+  background-color: #fff;
+  color: #696763;
+  min-height: 46px;
+  padding: 6px 12px;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 4px;
+  box-shadow: inherit;
+  &:hover, &:focus {
+    border-color: #FDB45E;
+    box-shadow: none;
+  }
+}
+
+
+textarea.form-control{
+  min-height: 200px;
+}

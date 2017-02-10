@@ -1,0 +1,35 @@
+
+@import "app/addproduct";
+@import "app/wishlist";
+@import "app/uploadImage";
+@import "app/slider";
+@import "app/contact";
+@import "app/header";
+@import "app/footer";
+
+.login-form form button, .signup-form form button {
+    display: inline-block;
+}
+
+span > label{
+    font-weight: normal;
+}
+
+.margin-20{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+textarea, select{
+	background: white;
+}
+
+textarea{
+	min-height: 200px;
+	max-height: 400px;
+}
+
+.btn-orange{
+  background-color: #FE980F;
+  color: white;
+}

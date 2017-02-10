@@ -1,0 +1,51 @@
+.wish-row {
+  padding: 20px;
+}
+
+.wish-tags .wish-tag {
+  min-width: 60px;
+  font-size: 12px;
+  border-radius: 2px;
+  text-align: center;
+  letter-spacing: 1px;
+  display: inline-block;
+  height: 20px;
+  padding: 0 2px;
+  line-height: 20px;
+  border: 1px solid #fe980f;
+  color: #fe980f;
+}
+
+.secondary-wish-images {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wish-image {
+  width: 24%;
+  img {
+    width: 100%;
+  }
+}
+
+.wishlist-images .primary-image-show {
+  border: 1px solid #fe980f;
+  img {
+    width: 100%;
+  }
+}
+
+.wish-budget {
+  font-size: 20px;
+  color: #FE980F;
+}
+
+.wish-timings {
+  font-size: 16px;
+  i {
+    color: #FE980F;
+  }
+}
