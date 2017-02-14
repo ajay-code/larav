@@ -19,7 +19,7 @@ class Helper
 
     public function tags()
     {
-        $tags = Tag::orderBy('count','desc')->take(10)->get();
+        $tags = Tag::orderBy('count', 'desc')->take(10)->get();
         return $tags;
     }
 

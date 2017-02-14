@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Image;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Image;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Photo extends Model

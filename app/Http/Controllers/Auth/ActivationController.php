@@ -44,13 +44,13 @@ class ActivationController extends Controller
     public function resend(Request $request)
     {
 
-        $this->validate($request,[
-           'email' => 'exists:users,email'
+        $this->validate($request, [
+            'email' => 'exists:users,email'
         ]);
 
         $user = User::where('email', $request->input('email'))->firstOrFail();
-        if($user->verified){
-            alert()->info('The user is already verified. Please directly login ' );
+        if ($user->verified) {
+            alert()->info('The user is already verified. Please directly login ');
             return redirect('/login');
         }
         $user->with('activationToken')->get();

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
-use Illuminate\Http\Request;
+use App\User;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller
@@ -20,5 +20,12 @@ class UserController extends Controller
     public function showWishListPage()
     {
         return view('wishlist');
+    }
+
+    public function showNotifications()
+    {
+        $user = User::find(2);
+
+        return view('user.notifications', compact('user'));
     }
 }

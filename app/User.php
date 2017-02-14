@@ -2,9 +2,10 @@
 
 namespace App;
 
+use App\Models\Bid;
+use App\Models\Product;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
 class User extends Authenticatable
 {
     use Notifiable;
@@ -44,15 +45,16 @@ class User extends Authenticatable
 
     public function hasSocialLinked($service)
     {
-        return (bool) $this->social->where('service', $service)->count();
+        return (bool)$this->social->where('service', $service)->count();
     }
 
-    public function getAvatar(){
-        if($this->profile_picture){
+    public function getAvatar()
+    {
+        if ($this->profile_picture) {
             return $this->profile_picture;
         }
 
-        return '//www.gravatar.com/avatar/'. md5( $this->email ) . '?s=50&d=mm';
+        return '//www.gravatar.com/avatar/' . md5($this->email) . '?s=50&d=mm';
 
     }
 
@@ -60,15 +62,24 @@ class User extends Authenticatable
 
     public function products()
     {
-        return $this->hasMany(\App\Models\Product::class);
+        return $this->hasMany(Product::class);
     }
 
+    public function bids()
+    {
+        return $this->hasMany(Bid::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function social()
     {
-        return $this->hasMany(\App\UserSocial::class);
+        return $this->hasMany(UserSocial::class);
     }
 
-    public function activationToken(){
+    public function activationToken()
+    {
         return $this->hasOne(ActivationToken::class);
     }
 

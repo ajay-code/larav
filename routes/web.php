@@ -25,16 +25,19 @@ Route::get('/tag/{tag}', 'HomeController@tagProducts');
 Route::get('/products/{slug}', 'HomeController@show');
 
 /*Add Someone's Product To your own wishlist*/
-Route::post('addtowishlist', 'HomeController@addProduct');
+Route::post('addtowishlist', 'HomeController@addProductToMyWishList');
 
 /*Routes For Contact Page*/
 Route::get('/contact', 'HomeController@contact');
 Route::post('/contact', 'Admin\ContactController@store');
 
 
+/* Bid on the Product */
+Route::post('/products/{slug}/bid', 'HomeController@makeBid');
 
 
-
+/*Notification Url*/
+Route::get('/notifications', 'User\UserController@showNotifications');
 
 
 

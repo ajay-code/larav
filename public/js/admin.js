@@ -12006,7 +12006,7 @@ __vue_options__ = __vue_exports__ = __vue_exports__.default
 if (typeof __vue_options__ === "function") {
   __vue_options__ = __vue_options__.options
 }
-__vue_options__.__file = "C:\\wamp\\www\\projects\\github\\buyagoo\\src\\resources\\assets\\js\\components\\admin\\Category.vue"
+__vue_options__.__file = "C:\\wamp\\www\\projects\\github\\larav\\resources\\assets\\js\\components\\admin\\Category.vue"
 if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "Category"
 }__vue_options__.render = __vue_template__.render
@@ -12019,9 +12019,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4f10be34", __vue_options__)
+    hotAPI.createRecord("data-v-c8502b9c", __vue_options__)
   } else {
-    hotAPI.reload("data-v-4f10be34", __vue_options__)
+    hotAPI.reload("data-v-c8502b9c", __vue_options__)
   }
 })()}
 if (__vue_options__.functional && typeof __vue_template__ !== "undefined") {console.error("[vue-loader] Category.vue: functional components are not supported with templates, they should use render functions.")}
@@ -12052,7 +12052,7 @@ __vue_options__ = __vue_exports__ = __vue_exports__.default
 if (typeof __vue_options__ === "function") {
   __vue_options__ = __vue_options__.options
 }
-__vue_options__.__file = "C:\\wamp\\www\\projects\\github\\buyagoo\\src\\resources\\assets\\js\\components\\admin\\Subcategory.vue"
+__vue_options__.__file = "C:\\wamp\\www\\projects\\github\\larav\\resources\\assets\\js\\components\\admin\\Subcategory.vue"
 if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "Subcategory"
 }__vue_options__.render = __vue_template__.render
@@ -12065,9 +12065,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-365dd478", __vue_options__)
+    hotAPI.createRecord("data-v-1793808c", __vue_options__)
   } else {
-    hotAPI.reload("data-v-365dd478", __vue_options__)
+    hotAPI.reload("data-v-1793808c", __vue_options__)
   }
 })()}
 if (__vue_options__.functional && typeof __vue_template__ !== "undefined") {console.error("[vue-loader] Subcategory.vue: functional components are not supported with templates, they should use render functions.")}
@@ -12358,7 +12358,7 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-365dd478", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-1793808c", module.exports)
   }
 }
 
@@ -12574,7 +12574,7 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-4f10be34", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-c8502b9c", module.exports)
   }
 }
 

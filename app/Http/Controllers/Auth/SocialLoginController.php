@@ -70,8 +70,9 @@ class SocialLoginController extends Controller
         })->first();
     }
 
-    public function uploadProfilePictureIfDoesNotExists($user, $serviceUser){
-        if(!$user->profile_picture){
+    public function uploadProfilePictureIfDoesNotExists($user, $serviceUser)
+    {
+        if (!$user->profile_picture) {
             $user->fill([
                 "profile_picture" => $serviceUser->getAvatar()
             ]);

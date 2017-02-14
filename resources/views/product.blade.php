@@ -51,16 +51,25 @@
                         <div class="col-sm-7">
                             <div class="product-information"><!--/product-information-->
                                 <h2>{{ $product->title }}</h2>
+
+                                <p>{{ nl2br($product->description) }} </p>
+
+                                <p><b>Category:</b>{{ config('app.name') }}</p>
+
+                                <p><b>Bids:</b> Open</p>
+
                                 <span>
 									<span>US ${{ $product->budget }}</span>
-                                    @if(Auth::check())
-                                        <add-to-wishlist product-id="{{ $product->id }}"></add-to-wishlist>
-
-                                    @endif
 								</span>
-                                <p><b>Status:</b> Open</p>
-                                <p><b>Description:</b> {{ nl2br($product->description) }} </p>
-                                <p><b>Brand:</b>{{ config('app.name') }}</p>
+                                <p>By: {{ $product->user->name }}</p>
+
+                                @if(Auth::check())
+                                    <div class="margin-20">
+                                        <add-to-wishlist product-id="{{ $product->id }}"></add-to-wishlist>
+                                    </div>
+                                    <bid-form slug="{{ $product->slug }}" ></bid-form>
+                                @endif
+
                             </div><!--/product-information-->
                         </div>
                     </div><!--/product-details-->
