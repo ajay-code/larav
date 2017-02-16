@@ -4,11 +4,12 @@ namespace App;
 
 use App\Models\Bid;
 use App\Models\Product;
+use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, Messagable;
 
     /**
      * The attributes that are mass assignable.

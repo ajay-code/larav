@@ -3,7 +3,7 @@
 
 A New Bid Was made on your Product By {{ $from->name }}
 
-@component('mail::button', ['url' => $url])
+@component('mail::button', ['url' => url($url)])
 View Notification
 @endcomponent
 

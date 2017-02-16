@@ -1,0 +1,46 @@
+ul.user-dropdown{
+	top: 40px;
+	background: rgba(240, 240, 233, 0.91);
+}
+
+.dropdown .user-dropdoen__item{
+	background: rgba(240, 240, 233, 0.91);
+	height: 100%;
+	color: #000;
+	display: inline-block;
+	a {
+		background: inherit;
+		&:hover {
+			background: inherit;
+		}
+	}
+}
+
+.sub-menu.user-dropdown{
+	width: 175px;
+}
+
+.shop-menu{
+	min-height: 40px;
+	li {
+		min-height: 40px;
+	}
+}
+
+
+
+ul.user-dropdown--shift-left{
+	left: -44px;
+}
+
+.notification-count{
+	position: absolute;
+    top: -2px;
+    left: 12px;
+
+    background-color: #e65606;
+    color: #fff;
+    border-radius: 3px;
+    padding: 1px 3px;
+    font: 8px Verdana;
+}

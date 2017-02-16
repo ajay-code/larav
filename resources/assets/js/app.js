@@ -1,4 +1,5 @@
 
+
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -17,8 +18,12 @@ require('./boot/bootstrap');
 // Vue.config.silent = true;
 Vue.component('add-to-wishlist', require('./components/user/AddToMyWishList.vue'));
 Vue.component('bid-form', require('./components/user/BidForm.vue'));
+Vue.component('chat', require('./components/messanger/chat.vue'));
+Vue.component('message-left', require('./components/messanger/messageLeft.vue'));
+Vue.component('message-right', require('./components/messanger/messageRight.vue'));
+Vue.component('message-form', require('./components/messanger/form.vue'));
 
-new Vue({
+new Vue({    
     el: '#app',
     data : {
 

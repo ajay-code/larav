@@ -174,6 +174,7 @@ return [
         Conner\Tagging\Providers\TaggingServiceProvider::class,
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         Cviebrock\EloquentSluggable\ServiceProvider::class,
+        Cmgmyr\Messenger\MessengerServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -38,20 +38,36 @@
                             @if(Auth::check())
                                 <li><a href="{{ url('/addwish') }}"><i class="fa fa-plus"></i> Add wish</a></li>
                                 <li><a href="{{ url('/wishlist') }}"><i class="fa fa-star"></i> Wishlist</a></li>
-                                <li><a href="#"><i class="fa fa-crosshairs"></i> Notifications</a></li>
-                                <li><a href="#">
-                                        <img class="avatar" src="{{ Auth::user()->getAvatar() }}" alt=""> <span class="user-name">{{Str::words(Auth::user()->name,1,'')}}</span></a></li>
                                 <li>
-                                    <a href="{{ url('/logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        <i class="fa fa-sign-out"></i> Logout
+                                    <a href="{{ url('/notifications') }}">
+                                        <i class="fa fa-bell">
+                                            @if(auth()->user()->unreadNotifications ->count() > 0)
+                                                <span class="notification-count">
+                                                    {{ auth()->user()->unreadNotifications ->count() }}
+                                                </span>
+                                            @endif
+                                        </i> 
                                     </a>
-
-                                    <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
-                                        {{ csrf_field() }}
-                                    </form>
                                 </li>
+                                <li class="dropdown">
+                                        <a href="#">
+                                        <img class="avatar" src="{{ Auth::user()->getAvatar() }}" alt=""> <span class="user-name">{{Str::words(Auth::user()->name,1,'')}}</span>
+                                        </a>
+                                        <ul role="menu" class="sub-menu user-dropdown user-dropdown--shift-left">
+                                            <li class="user-dropdoen__item">
+                                                <a href="{{ url('/logout') }}"
+                                                   onclick="event.preventDefault();
+                                                                 document.getElementById('logout-form').submit();">
+                                                    <i class="fa fa-sign-out"></i> Logout
+                                                </a>
+
+                                                <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+                                                    {{ csrf_field() }}
+                                                </form>
+                                            </li>
+                                        </ul>
+                                </li>
+                                
                             @else
                                 <li><a href="{{url('login')}}"><i class="fa fa-lock"></i> Login</a></li>
                                 <li><a href="{{url('register')}}"><i class="fa fa-registered"></i> Register</a></li>
@@ -88,6 +104,8 @@
                                 </ul>
                             </li>
                             <li><a href="{{ url('/contact') }}" class="{{ active('contact') }}">Contact</a></li>
+                            <li><a href="{{ url('/messages') }}" class="{{ active('message') }}">Message</a></li>
+
                         </ul>
                     </div>
                 </div>

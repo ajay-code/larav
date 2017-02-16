@@ -6,8 +6,8 @@ use App\Models\Bid;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Subcategory;
-use App\Notifications\NewBid;
 use Illuminate\Http\Request;
+use App\Notifications\NewBid;
 use App\Http\Traits\ShowProducts;
 
 class HomeController extends Controller
@@ -47,11 +47,11 @@ class HomeController extends Controller
         $product = Product::where('slug', $slug)->first();
         $bid = new Bid($request->all());
         $bid->product_id = $product->id;
-        $user = auth()->user();
-        $bid->seller()->associate($user);
+        $from = auth()->user();
+        $bid->seller()->associate($from);
         $bid->save();
 
-        $user->notify(new NewBid($product->user, $bid, $user));
+        $product->user->notify(new NewBid($product->user, $bid, $from));
 
         return $bid;
 

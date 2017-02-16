@@ -36,8 +36,7 @@ Route::post('/contact', 'Admin\ContactController@store');
 Route::post('/products/{slug}/bid', 'HomeController@makeBid');
 
 
-/*Notification Url*/
-Route::get('/notifications', 'User\UserController@showNotifications');
+
 
 
 

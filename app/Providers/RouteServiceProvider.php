@@ -47,6 +47,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapUserApiRoutes();
 
+        $this->mapMessagesRoutes();
+
         //
     }
 
@@ -88,7 +90,7 @@ class RouteServiceProvider extends ServiceProvider
     }
 
      /**
-     * Define the "admin" routes for the application.
+     * Define the "User" routes for the application.
      *
      * These routes all receive session state, CSRF protection, etc.
      *
@@ -106,7 +108,7 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
-     * Define the "admin api" routes for the application.
+     * Define the "User api" routes for the application.
      *
      * These routes all receive session state, CSRF protection, etc.
      *
@@ -122,7 +124,24 @@ class RouteServiceProvider extends ServiceProvider
             require base_path('routes/userApi.php');
         });
     }
-
+        
+    /**
+     * Define the "Messages" routes for the application.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     *
+     * @return void
+     */
+    protected function mapMessagesRoutes()
+    {
+        Route::group([
+            'middleware' => ['web', 'auth'],
+            'prefix' => 'messages',
+            'namespace' => $this->namespace,
+        ], function ($router) {
+            require base_path('routes/messages.php');
+        });
+    }
     /**
      * Define the "web" routes for the application.
      *

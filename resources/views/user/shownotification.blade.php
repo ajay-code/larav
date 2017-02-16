@@ -4,7 +4,7 @@
 <section>
     <div class="container">
         <div class="row">
-            <div class="col-sm-10 col-sm-offset-1 notifications">
+            <div class="col-sm-12 notifications">
                     <h3 class="notifications__header">All Notifications...</h3>
                         <table class="table table-hover">
                             <thead>
@@ -23,11 +23,9 @@
                                     </th>
                                 </tr>
                             </thead>
-                        @foreach ($user->notifications as $notification)
-                            <tr class="notifications__item clickable-row"  
-                                data-href="{{ url('/notifications/'.$notification->id) }}">
+                            <tr> 
                                 <td>
-                                    <b>#{{ $loop->iteration }}</b>
+                                    <a href=""><i class="fa fa-remove" ></i></a>   
                                 </td>
                                 <td>
                                     <span> 
@@ -45,7 +43,8 @@
                                     </span>
                                 </td>
                             </tr>
-                        @endforeach
+                                @if ($notification->markAsRead())
+                                @endif
                         </table>
 
                     

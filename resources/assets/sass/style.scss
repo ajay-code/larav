@@ -6,6 +6,7 @@
 @import "app/contact";
 @import "app/header";
 @import "app/footer";
+@import "app/nav";
 
 .login-form form button, .signup-form form button {
     display: inline-block;
@@ -21,15 +22,19 @@ span > label{
 }
 
 textarea, select{
-	background: white;
+  background: white;
 }
 
 textarea{
-	min-height: 200px;
-	max-height: 400px;
+  min-height: 200px;
+  max-height: 400px;
 }
 
 .btn-orange{
   background-color: #FE980F;
   color: white;
+}
+
+#app{
+  min-height: 400px;
 }
