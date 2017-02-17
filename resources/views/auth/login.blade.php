@@ -7,7 +7,7 @@
                 <div class="login-form">
                     <h2>Login to your account</h2>
                     <span class="pull-right">
-                        <a href="{{ url('/confirmation/resend') }}">Resend Varification Email</a>
+                        <a href="{{ url('/confirmation/resend') }}">Resend Verification Email</a>
                     </span>
                     <br>
                     <br>
@@ -15,7 +15,7 @@
                         {{ csrf_field() }}
 
                         <div class="{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <input id="email" type="email" name="email"
+                            <input id="email" type="email" name="email" placeholder="Enter Your Email" 
                                    value="{{ old('email') }}" required autofocus>
 
                             @if ($errors->has('email'))

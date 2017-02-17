@@ -132,6 +132,7 @@ class MessagesController extends Controller
      */
     public function update($id)
     {
+        return request()->all();
         try {
             $thread = Thread::findOrFail($id);
         } catch (ModelNotFoundException $e) {

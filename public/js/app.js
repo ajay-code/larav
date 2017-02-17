@@ -37695,10 +37695,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {};
     },
 
-    props: ['thread', 'users', 'currentUser'],
+    props: ['thread', 'users', 'currentUser', 'postUrl'],
     mounted: function mounted() {},
 
-    methods: {}
+    methods: {
+        refresh: function refresh() {
+            console.log('hello');
+        }
+    }
 };
 
 /***/ }),
@@ -37713,17 +37717,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = {
     data: function data() {
         return {
-            form: new __WEBPACK_IMPORTED_MODULE_0__form_Form__["a" /* default */]({})
+            form: new __WEBPACK_IMPORTED_MODULE_0__form_Form__["a" /* default */]({
+                message: ""
+            })
         };
     },
 
-    props: [],
-    methods: {}
+    props: ['action'],
+    methods: {
+        post: function post() {
+            var _this = this;
+
+            this.form.put(this.action).then(function (res) {
+                _this.form.clear();
+                _this.$emit('posted');
+            });
+        }
+    }
 };
 
 /***/ }),
@@ -46117,8 +46143,49 @@ module.exports = __vue_exports__
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div')
-},staticRenderFns: []}
+  return _c('div', [_c('form', {
+    attrs: {
+      "action": _vm.action
+    },
+    on: {
+      "submit": function($event) {
+        $event.preventDefault();
+        _vm.post($event)
+      }
+    }
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('textarea', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.form.message),
+      expression: "form.message"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "name": "message"
+    },
+    domProps: {
+      "value": _vm._s(_vm.form.message)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.form.message = $event.target.value
+      }
+    }
+  })]), _vm._v(" "), _vm._m(0)])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "form-group"
+  }, [_c('button', {
+    staticClass: "btn btn-primary form-control",
+    attrs: {
+      "type": "submit"
+    }
+  }, [_vm._v("Submit")])])
+}]}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
@@ -46244,7 +46311,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "message": message
       }
     })]
-  }), _vm._v(" "), _c('message-form')], 2)
+  }), _vm._v(" "), _c('message-form', {
+    attrs: {
+      "action": _vm.postUrl
+    },
+    on: {
+      "posted": _vm.refresh
+    }
+  })], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {

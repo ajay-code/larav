@@ -1,5 +1,5 @@
 @extends('layouts.master')
 
 @section('content')
-    <chat :thread="{{ $thread }}" :users="{{ $users }}" :current-user="{{ auth()->user() }}"></chat>
+    <chat post-url="{{ route('messages.update', $thread->id) }}" :thread="{{ $thread }}" :users="{{ $users }}" :current-user="{{ auth()->user() }}"></chat>
 @stop

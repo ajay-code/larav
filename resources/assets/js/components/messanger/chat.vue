@@ -5,7 +5,7 @@
             <message-left v-if="currentUser.id == message.user.id"  :message="message" ></message-left>
             <message-right v-else  :message="message" ></message-left>
         </template>
-        <message-form> </message-form>   
+        <message-form :action="postUrl" @posted="refresh"> </message-form>   
     </div>
 </template>
 
@@ -17,11 +17,13 @@ import form from "./form";
 
             }
         },
-        props: ['thread', 'users', 'currentUser'],
+        props: ['thread', 'users', 'currentUser', 'postUrl'], 
         mounted() {
         },
         methods: {
-
+            refresh(){
+                console.log('hello');
+            }
         }
     }
 </script>

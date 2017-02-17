@@ -18,9 +18,17 @@ class ActivationController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function confirmEmail(ActivationToken $token)
+    public function confirmEmail($token)
     {
-//        return $token;
+        try{
+        ActivationToken::where('token', $token)->first();
+            
+        }catch(\Exception $e){
+            
+            alert()->info('Your Account has already been confirmed');
+
+            return redirect('/');
+        }
 
         $token->user()->update([
             'verified' => true
@@ -30,7 +38,7 @@ class ActivationController extends Controller
 
         Auth::login($token->user);
 
-        alert()->success('you are now LoggedIn', 'Account Conformed');
+        alert()->success('you are now LoggedIn', 'Account Confirmed');
 
         return redirect()->route('home');
 
@@ -50,7 +58,7 @@ class ActivationController extends Controller
 
         $user = User::where('email', $request->input('email'))->firstOrFail();
         if ($user->verified) {
-            alert()->info('The user is already verified. Please directly login ');
+            alert()->info('The user is already verified. Please login directly');
             return redirect('/login');
         }
         $user->with('activationToken')->get();
@@ -60,7 +68,7 @@ class ActivationController extends Controller
         $email = new UserConfirmationEmail($user, $token);
         Mail::to($request->input('email'))->send($email);
 
-        alert()->success('Confirmation Email has Resend sent to you');
+        alert()->success('New Confirmation Email has been sent to you');
 
         return back();
     }

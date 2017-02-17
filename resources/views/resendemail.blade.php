@@ -5,12 +5,12 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
                 <div class="login-form">
-                    <h2>Login to your account</h2>
+                    <h2>Resend Verification Email</h2>
                     <form role="form" method="POST" action="{{ url('/confirmation/resend') }}">
                         {{ csrf_field() }}
 
                         <div class="{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <input id="email" type="email" name="email"
+                            <input id="email" type="email" name="email" placeholder="Enter Your Email" 
                                    value="{{ old('email') }}" required autofocus>
 
                             @if ($errors->has('email'))
