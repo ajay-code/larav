@@ -20,11 +20,9 @@ class ActivationController extends Controller
      */
     public function confirmEmail($token)
     {
-        try{
-        ActivationToken::where('token', $token)->first();
-            
-        }catch(\Exception $e){
-            
+        $token = ActivationToken::where('token', $token)->first();
+
+        if(!$token){
             alert()->info('Your Account has already been confirmed');
 
             return redirect('/');
