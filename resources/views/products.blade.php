@@ -13,6 +13,14 @@
                     <div class="features_items"><!--features_items-->
                         <h2 class="title text-center">Products</h2>
 
+                        @if($products->count() <= 0)
+                            <div class="alert alert-danger" role="alert">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Error:</span>
+                              No Product Found
+                            </div>
+                        @endif
+
                         @foreach($products->chunk(4) as $productSet)
                             @foreach($productSet as $product)
                                 <div class="col-sm-3 col-sm-offset-0  col-xs-8 col-xs-offset-2">

@@ -40,6 +40,10 @@ class HomeController extends Controller
         $products = Product::search($request->input('q'))->paginate(12);
         $products->load('photos', 'user');
 
+        if ($products->count() <= 0 ){
+            alert()->error('No Matching Product Found');
+        }
+
         return view('products', compact('products'));
     }
 
