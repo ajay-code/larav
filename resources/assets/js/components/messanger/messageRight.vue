@@ -32,7 +32,7 @@ import moment from "moment";
                 return "//www.gravatar.com/avatar/" + md5(this.message.user.email) +"?s=64&d=mm";
             },
             at(){
-                return moment(this.message.created_at).fromNow();
+                return moment.utc(this.message.created_at).fromNow();
             }  
         },
         mounted() {
@@ -40,3 +40,4 @@ import moment from "moment";
         }
     } 
 </script>
+

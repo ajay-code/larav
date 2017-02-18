@@ -37337,6 +37337,7 @@ __webpack_require__(163);
 
 // Vue.config.debug = false;
 // Vue.config.silent = true;
+
 Vue.component('add-to-wishlist', __webpack_require__(187));
 Vue.component('bid-form', __webpack_require__(188));
 Vue.component('chat', __webpack_require__(184));
@@ -37677,6 +37678,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form__ = __webpack_require__(147);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__form__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event__ = __webpack_require__(217);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__event__);
 //
 //
 //
@@ -37688,6 +37691,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = {
@@ -37695,12 +37700,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {};
     },
 
-    props: ['thread', 'users', 'currentUser', 'postUrl'],
-    mounted: function mounted() {},
+    props: ['thread', 'messages', 'users', 'currentUser', 'postUrl'],
+    mounted: function mounted() {
+        __WEBPACK_IMPORTED_MODULE_1__event___default.a.$on('posted', this.refresh);
+    },
 
     methods: {
         refresh: function refresh() {
-            console.log('hello');
+            var _this = this;
+
+            console.log(this.postUrl + "/get/vue");
+            axios.get(this.postUrl + "/get/vue").then(function (res) {
+                res.data.forEach(function (data) {
+                    _this.messages.push(data);
+                });
+                console.log(res.data);
+            });
         }
     }
 };
@@ -37712,6 +37727,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form_Form__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event__ = __webpack_require__(217);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__event__);
 //
 //
 //
@@ -37728,6 +37745,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = {
@@ -37744,9 +37768,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         post: function post() {
             var _this = this;
 
-            this.form.put(this.action).then(function (res) {
+            this.form.put(this.action + '/vue').then(function (res) {
+                __WEBPACK_IMPORTED_MODULE_1__event___default.a.$emit('posted', res.data);
                 _this.form.clear();
-                _this.$emit('posted');
             });
         }
     }
@@ -37794,7 +37818,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return "//www.gravatar.com/avatar/" + __WEBPACK_IMPORTED_MODULE_0_md5___default()(this.message.user.email) + "?s=64&d=mm";
         },
         at: function at() {
-            return __WEBPACK_IMPORTED_MODULE_1_moment___default()(this.message.created_at).fromNow();
+            return __WEBPACK_IMPORTED_MODULE_1_moment___default.a.utc(this.message.created_at).fromNow();
         }
     },
     mounted: function mounted() {}
@@ -37844,7 +37868,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return "//www.gravatar.com/avatar/" + __WEBPACK_IMPORTED_MODULE_0_md5___default()(this.message.user.email) + "?s=64&d=mm";
         },
         at: function at() {
-            return __WEBPACK_IMPORTED_MODULE_1_moment___default()(this.message.created_at).fromNow();
+            return __WEBPACK_IMPORTED_MODULE_1_moment___default.a.utc(this.message.created_at).fromNow();
         }
     },
     mounted: function mounted() {}
@@ -46170,12 +46194,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": _vm._s(_vm.form.message)
     },
     on: {
+      "keydown": function($event) {
+        _vm.form.errors.clear()
+      },
       "input": function($event) {
         if ($event.target.composing) { return; }
         _vm.form.message = $event.target.value
       }
     }
-  })]), _vm._v(" "), _vm._m(0)])])
+  }), _vm._v(" "), (_vm.form.errors.has('message')) ? _c('span', {
+    staticClass: "text-danger",
+    domProps: {
+      "textContent": _vm._s(_vm.form.errors.get('message'))
+    }
+  }) : _vm._e()]), _vm._v(" "), _vm._m(0)])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "form-group"
@@ -46301,7 +46333,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     domProps: {
       "textContent": _vm._s(_vm.thread.subject)
     }
-  }), _vm._v(" "), _vm._l((_vm.thread.messages), function(message) {
+  }), _vm._v(" "), _vm._l((_vm.messages), function(message) {
     return [(_vm.currentUser.id == message.user.id) ? _c('message-left', {
       attrs: {
         "message": message
@@ -46314,9 +46346,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }), _vm._v(" "), _c('message-form', {
     attrs: {
       "action": _vm.postUrl
-    },
-    on: {
-      "posted": _vm.refresh
     }
   })], 2)
 },staticRenderFns: []}
@@ -46737,6 +46766,27 @@ __webpack_require__(150);
 __webpack_require__(151);
 module.exports = __webpack_require__(152);
 
+
+/***/ }),
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */
+/***/ (function(module, exports) {
+
+module.exports = new Vue();
 
 /***/ })
 /******/ ]);

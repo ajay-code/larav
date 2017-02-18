@@ -16,6 +16,7 @@ require('./boot/bootstrap');
 
 // Vue.config.debug = false;
 // Vue.config.silent = true;
+
 Vue.component('add-to-wishlist', require('./components/user/AddToMyWishList.vue'));
 Vue.component('bid-form', require('./components/user/BidForm.vue'));
 Vue.component('chat', require('./components/messanger/chat.vue'));
@@ -29,6 +30,7 @@ new Vue({
 
     }
 });
+
 
 
 
