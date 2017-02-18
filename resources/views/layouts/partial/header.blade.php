@@ -111,7 +111,9 @@
                 </div>
                 <div class="col-sm-3 col-xs-8">
                     <div class="search_box ">
-                        <input id="search" type="text" placeholder="Search"/>
+                    <form action="{{ url('search') }}">
+                        <input id="search" name="q" type="text" placeholder="Search"/>
+                    </form>
                     </div>
                 </div>
             </div>

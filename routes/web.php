@@ -21,6 +21,8 @@ Route::get('/subcategory/{subcategory}', 'HomeController@subcategoryProducts');
 
 Route::get('/tag/{tag}', 'HomeController@tagProducts');
 
+Route::get('/search', 'HomeController@search');
+
 /*Single Product Display*/
 Route::get('/products/{slug}', 'HomeController@show');
 

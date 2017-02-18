@@ -6,15 +6,17 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
+        "cmgmyr/messenger": "~2.0",
         "cviebrock/eloquent-sluggable": "^4.2",
         "hesto/multi-auth": "^1.0",
         "intervention/image": "^2.3",
         "laravel/framework": "5.4.*",
+        "laravel/scout": "^3.0",
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
         "rtconner/laravel-tagging": "~2.2",
-        "uxweb/sweet-alert": "^1.4",
-        "cmgmyr/messenger": "~2.0"
+        "teamtnt/laravel-scout-tntsearch-driver": "^2.0",
+        "uxweb/sweet-alert": "^1.4"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.2",

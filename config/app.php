@@ -175,6 +175,8 @@ return [
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         Cviebrock\EloquentSluggable\ServiceProvider::class,
         Cmgmyr\Messenger\MessengerServiceProvider::class,
+        Laravel\Scout\ScoutServiceProvider::class,
+        TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
 
         /*
          * Application Service Providers...

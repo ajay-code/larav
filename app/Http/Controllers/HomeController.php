@@ -29,6 +29,20 @@ class HomeController extends Controller
         return view('index', compact('products', 'categories'));
     }
 
+    /**
+     * Show the Landing page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+
+        $products = Product::search($request->input('q'))->paginate(12);
+        $products->load('photos', 'user');
+
+        return view('products', compact('products'));
+    }
+
 
     /*Show Contact Form*/
     public function contact()

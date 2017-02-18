@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Conner\Tagging\Taggable;
-use Cviebrock\EloquentSluggable\Sluggable;
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 class Product extends Model
 {
-    use Taggable, Sluggable;
+    use Taggable, Sluggable,Searchable;
 
     protected $fillable = ['title', 'description', 'budget', 'user_id', 'subcategory_id'];
 
@@ -74,5 +75,10 @@ class Product extends Model
     public function scopeLatestLast($query)
     {
         $query->orderBy('created_at', 'asc');
+    }
+
+    public function searchableAs()
+    {
+        return 'products_index';   
     }
 }
