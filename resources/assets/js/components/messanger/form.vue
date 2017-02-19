@@ -34,7 +34,7 @@
         props: ['action'],
         methods: {
             post(){
-                this.form.put(this.action + '/vue').then(
+                this.form.put(this.action).then(
                     res => {
                         eventHub.$emit('posted', res.data);
                         this.form.clear();

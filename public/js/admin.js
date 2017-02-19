@@ -1122,7 +1122,7 @@ var __vue_styles__ = {}
 __vue_exports__ = __webpack_require__(154)
 
 /* template */
-var __vue_template__ = __webpack_require__(189)
+var __vue_template__ = __webpack_require__(196)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -1134,7 +1134,7 @@ __vue_options__ = __vue_exports__ = __vue_exports__.default
 if (typeof __vue_options__ === "function") {
   __vue_options__ = __vue_options__.options
 }
-__vue_options__.__file = "C:\\wamp\\www\\up\\larav\\resources\\assets\\js\\components\\admin\\Category.vue"
+__vue_options__.__file = "C:\\wamp\\www\\projects\\github\\larav\\resources\\assets\\js\\components\\admin\\Category.vue"
 if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "Category"
 }__vue_options__.render = __vue_template__.render
@@ -1147,9 +1147,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-02be6072", __vue_options__)
+    hotAPI.createRecord("data-v-c8502b9c", __vue_options__)
   } else {
-    hotAPI.reload("data-v-02be6072", __vue_options__)
+    hotAPI.reload("data-v-c8502b9c", __vue_options__)
   }
 })()}
 if (__vue_options__.functional && typeof __vue_template__ !== "undefined") {console.error("[vue-loader] Category.vue: functional components are not supported with templates, they should use render functions.")}
@@ -1169,7 +1169,7 @@ var __vue_styles__ = {}
 __vue_exports__ = __webpack_require__(155)
 
 /* template */
-var __vue_template__ = __webpack_require__(194)
+var __vue_template__ = __webpack_require__(189)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -1181,7 +1181,7 @@ __vue_options__ = __vue_exports__ = __vue_exports__.default
 if (typeof __vue_options__ === "function") {
   __vue_options__ = __vue_options__.options
 }
-__vue_options__.__file = "C:\\wamp\\www\\up\\larav\\resources\\assets\\js\\components\\admin\\Subcategory.vue"
+__vue_options__.__file = "C:\\wamp\\www\\projects\\github\\larav\\resources\\assets\\js\\components\\admin\\Subcategory.vue"
 if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "Subcategory"
 }__vue_options__.render = __vue_template__.render
@@ -1194,9 +1194,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-dd5dbd0c", __vue_options__)
+    hotAPI.createRecord("data-v-1793808c", __vue_options__)
   } else {
-    hotAPI.reload("data-v-dd5dbd0c", __vue_options__)
+    hotAPI.reload("data-v-1793808c", __vue_options__)
   }
 })()}
 if (__vue_options__.functional && typeof __vue_template__ !== "undefined") {console.error("[vue-loader] Subcategory.vue: functional components are not supported with templates, they should use render functions.")}
@@ -1207,309 +1207,6 @@ module.exports = __vue_exports__
 /***/ }),
 
 /***/ 189:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-5"
-  }, [_c('div', {
-    staticClass: "content-box-large"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_c('div', {
-    staticClass: "panel-title"
-  }, [_vm._v("All categories")]), _vm._v(" "), _c('div', {
-    staticClass: "panel-options"
-  }, [_c('a', {
-    attrs: {
-      "href": "#",
-      "data-rel": "collapse"
-    },
-    on: {
-      "click": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.getCategories($event)
-      }
-    }
-  }, [_c('i', {
-    staticClass: "glyphicon glyphicon-refresh"
-  })])])]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('table', {
-    staticClass: "table"
-  }, [_vm._m(0), _vm._v(" "), _c('tbody', _vm._l((_vm.categories), function(category, index) {
-    return _c('tr', [_c('td', {
-      domProps: {
-        "textContent": _vm._s(category.name)
-      }
-    }), _vm._v(" "), _c('td', [_c('span', {
-      staticClass: "pull-right"
-    }, [_c('a', {
-      staticClass: "padding",
-      attrs: {
-        "href": "#",
-        "data-rel": "collapse"
-      },
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.change(index)
-        }
-      }
-    }, [_c('i', {
-      staticClass: " glyphicon glyphicon-pencil"
-    })]), _vm._v(" "), _c('a', {
-      staticClass: "padding",
-      attrs: {
-        "href": "#",
-        "data-rel": "reload"
-      },
-      on: {
-        "click": function($event) {
-          $event.stopPropagation();
-          $event.preventDefault();
-          _vm.removeCategory(index)
-        }
-      }
-    }, [_c('i', {
-      staticClass: "glyphicon glyphicon-trash"
-    })])])])])
-  }))])])])]), _vm._v(" "), _c('div', {
-    staticClass: "col-md-6"
-  }, [_c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_vm._m(1), _vm._v(" "), _c('div', {
-    staticClass: "content-box-large box-with-header"
-  }, [_c('form', {
-    staticClass: "form-horizontal",
-    attrs: {
-      "role": "form"
-    },
-    on: {
-      "submit": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.addCategory($event)
-      }
-    }
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.newCategory),
-      expression: "newCategory"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "type": "text",
-      "id": "category",
-      "name": "category",
-      "placeholder": "Add category"
-    },
-    domProps: {
-      "value": _vm._s(_vm.newCategory)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.newCategory = $event.target.value
-      }
-    }
-  })])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c('div', {
-    staticClass: "row"
-  }, [_c('div', {
-    staticClass: "col-md-12"
-  }, [_vm._m(3), _vm._v(" "), _c('div', {
-    staticClass: "content-box-large box-with-header"
-  }, [_c('form', {
-    staticClass: "form-horizontal",
-    attrs: {
-      "role": "form"
-    },
-    on: {
-      "submit": function($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
-        _vm.changeInDB($event)
-      }
-    }
-  }, [_c('div', {
-    staticClass: "form-group"
-  }, [_c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.editedCategory.name),
-      expression: "editedCategory.name"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "type": "text",
-      "id": "edit_category",
-      "name": "category",
-      "placeholder": "Edit category"
-    },
-    domProps: {
-      "value": _vm._s(_vm.editedCategory.name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.editedCategory.name = $event.target.value
-      }
-    }
-  })])]), _vm._v(" "), _vm._m(4)])])])])])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('thead', [_c('tr', [_c('th', [_vm._v("Category")]), _vm._v(" "), _c('th', [_c('span', {
-    staticClass: "pull-right"
-  }, [_vm._v("Actions")])])])])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "content-box-header"
-  }, [_c('div', {
-    staticClass: "panel-title"
-  }, [_vm._v("Add new category")])])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "form-group"
-  }, [_c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('button', {
-    staticClass: "btn btn-primary",
-    attrs: {
-      "type": "submit",
-      "name": "submit"
-    }
-  }, [_vm._v("Add")])])])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "content-box-header"
-  }, [_c('div', {
-    staticClass: "panel-title"
-  }, [_vm._v("Edit category")])])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "form-group"
-  }, [_c('div', {
-    staticClass: "col-sm-12"
-  }, [_c('button', {
-    staticClass: "btn btn-primary",
-    attrs: {
-      "type": "submit",
-      "name": "submit"
-    }
-  }, [_vm._v("Update")])])])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-02be6072", module.exports)
-  }
-}
-
-/***/ }),
-
-/***/ 19:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(1);
-var transformData = __webpack_require__(22);
-var isCancel = __webpack_require__(7);
-var defaults = __webpack_require__(4);
-
-/**
- * Throws a `Cancel` if cancellation has been requested.
- */
-function throwIfCancellationRequested(config) {
-  if (config.cancelToken) {
-    config.cancelToken.throwIfRequested();
-  }
-}
-
-/**
- * Dispatch a request to the server using the configured adapter.
- *
- * @param {object} config The config that is to be used for the request
- * @returns {Promise} The Promise to be fulfilled
- */
-module.exports = function dispatchRequest(config) {
-  throwIfCancellationRequested(config);
-
-  // Ensure headers exist
-  config.headers = config.headers || {};
-
-  // Transform request data
-  config.data = transformData(
-    config.data,
-    config.headers,
-    config.transformRequest
-  );
-
-  // Flatten headers
-  config.headers = utils.merge(
-    config.headers.common || {},
-    config.headers[config.method] || {},
-    config.headers || {}
-  );
-
-  utils.forEach(
-    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
-    function cleanHeaderConfig(method) {
-      delete config.headers[method];
-    }
-  );
-
-  var adapter = config.adapter || defaults.adapter;
-
-  return adapter(config).then(function onAdapterResolution(response) {
-    throwIfCancellationRequested(config);
-
-    // Transform response data
-    response.data = transformData(
-      response.data,
-      response.headers,
-      config.transformResponse
-    );
-
-    return response;
-  }, function onAdapterRejection(reason) {
-    if (!isCancel(reason)) {
-      throwIfCancellationRequested(config);
-
-      // Transform response data
-      if (reason && reason.response) {
-        reason.response.data = transformData(
-          reason.response.data,
-          reason.response.headers,
-          config.transformResponse
-        );
-      }
-    }
-
-    return Promise.reject(reason);
-  });
-};
-
-
-/***/ }),
-
-/***/ 194:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1790,7 +1487,310 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-dd5dbd0c", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-1793808c", module.exports)
+  }
+}
+
+/***/ }),
+
+/***/ 19:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(1);
+var transformData = __webpack_require__(22);
+var isCancel = __webpack_require__(7);
+var defaults = __webpack_require__(4);
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+function throwIfCancellationRequested(config) {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested();
+  }
+}
+
+/**
+ * Dispatch a request to the server using the configured adapter.
+ *
+ * @param {object} config The config that is to be used for the request
+ * @returns {Promise} The Promise to be fulfilled
+ */
+module.exports = function dispatchRequest(config) {
+  throwIfCancellationRequested(config);
+
+  // Ensure headers exist
+  config.headers = config.headers || {};
+
+  // Transform request data
+  config.data = transformData(
+    config.data,
+    config.headers,
+    config.transformRequest
+  );
+
+  // Flatten headers
+  config.headers = utils.merge(
+    config.headers.common || {},
+    config.headers[config.method] || {},
+    config.headers || {}
+  );
+
+  utils.forEach(
+    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+    function cleanHeaderConfig(method) {
+      delete config.headers[method];
+    }
+  );
+
+  var adapter = config.adapter || defaults.adapter;
+
+  return adapter(config).then(function onAdapterResolution(response) {
+    throwIfCancellationRequested(config);
+
+    // Transform response data
+    response.data = transformData(
+      response.data,
+      response.headers,
+      config.transformResponse
+    );
+
+    return response;
+  }, function onAdapterRejection(reason) {
+    if (!isCancel(reason)) {
+      throwIfCancellationRequested(config);
+
+      // Transform response data
+      if (reason && reason.response) {
+        reason.response.data = transformData(
+          reason.response.data,
+          reason.response.headers,
+          config.transformResponse
+        );
+      }
+    }
+
+    return Promise.reject(reason);
+  });
+};
+
+
+/***/ }),
+
+/***/ 196:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-5"
+  }, [_c('div', {
+    staticClass: "content-box-large"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_c('div', {
+    staticClass: "panel-title"
+  }, [_vm._v("All categories")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-options"
+  }, [_c('a', {
+    attrs: {
+      "href": "#",
+      "data-rel": "collapse"
+    },
+    on: {
+      "click": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.getCategories($event)
+      }
+    }
+  }, [_c('i', {
+    staticClass: "glyphicon glyphicon-refresh"
+  })])])]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('table', {
+    staticClass: "table"
+  }, [_vm._m(0), _vm._v(" "), _c('tbody', _vm._l((_vm.categories), function(category, index) {
+    return _c('tr', [_c('td', {
+      domProps: {
+        "textContent": _vm._s(category.name)
+      }
+    }), _vm._v(" "), _c('td', [_c('span', {
+      staticClass: "pull-right"
+    }, [_c('a', {
+      staticClass: "padding",
+      attrs: {
+        "href": "#",
+        "data-rel": "collapse"
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.change(index)
+        }
+      }
+    }, [_c('i', {
+      staticClass: " glyphicon glyphicon-pencil"
+    })]), _vm._v(" "), _c('a', {
+      staticClass: "padding",
+      attrs: {
+        "href": "#",
+        "data-rel": "reload"
+      },
+      on: {
+        "click": function($event) {
+          $event.stopPropagation();
+          $event.preventDefault();
+          _vm.removeCategory(index)
+        }
+      }
+    }, [_c('i', {
+      staticClass: "glyphicon glyphicon-trash"
+    })])])])])
+  }))])])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-md-6"
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_vm._m(1), _vm._v(" "), _c('div', {
+    staticClass: "content-box-large box-with-header"
+  }, [_c('form', {
+    staticClass: "form-horizontal",
+    attrs: {
+      "role": "form"
+    },
+    on: {
+      "submit": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.addCategory($event)
+      }
+    }
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.newCategory),
+      expression: "newCategory"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "type": "text",
+      "id": "category",
+      "name": "category",
+      "placeholder": "Add category"
+    },
+    domProps: {
+      "value": _vm._s(_vm.newCategory)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.newCategory = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_vm._m(3), _vm._v(" "), _c('div', {
+    staticClass: "content-box-large box-with-header"
+  }, [_c('form', {
+    staticClass: "form-horizontal",
+    attrs: {
+      "role": "form"
+    },
+    on: {
+      "submit": function($event) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        _vm.changeInDB($event)
+      }
+    }
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.editedCategory.name),
+      expression: "editedCategory.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "type": "text",
+      "id": "edit_category",
+      "name": "category",
+      "placeholder": "Edit category"
+    },
+    domProps: {
+      "value": _vm._s(_vm.editedCategory.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.editedCategory.name = $event.target.value
+      }
+    }
+  })])]), _vm._v(" "), _vm._m(4)])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('thead', [_c('tr', [_c('th', [_vm._v("Category")]), _vm._v(" "), _c('th', [_c('span', {
+    staticClass: "pull-right"
+  }, [_vm._v("Actions")])])])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "content-box-header"
+  }, [_c('div', {
+    staticClass: "panel-title"
+  }, [_vm._v("Add new category")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "form-group"
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('button', {
+    staticClass: "btn btn-primary",
+    attrs: {
+      "type": "submit",
+      "name": "submit"
+    }
+  }, [_vm._v("Add")])])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "content-box-header"
+  }, [_c('div', {
+    staticClass: "panel-title"
+  }, [_vm._v("Edit category")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "form-group"
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [_c('button', {
+    staticClass: "btn btn-primary",
+    attrs: {
+      "type": "submit",
+      "name": "submit"
+    }
+  }, [_vm._v("Update")])])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-c8502b9c", module.exports)
   }
 }
 

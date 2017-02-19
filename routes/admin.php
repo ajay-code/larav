@@ -1,6 +1,6 @@
 <?php
 
-Route::get('', 'Admin\AdminController@index');
+Route::get('/', 'Admin\AdminController@index');
 Route::get('/home', 'Admin\AdminController@index')->name('home');
 Route::get('/index', 'Admin\AdminController@index')->name('index');
 Route::get('/category', 'Admin\CategoryController@view')->name('category');

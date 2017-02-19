@@ -81,13 +81,8 @@ class MessagesController extends Controller
         return view('messenger.showvue', compact('thread', 'users'));
     }
 
-    /**
-     * Shows a message thread.
-     *
-     * @param $id
-     * @return mixed
-     */
-    public function getMessageAjax($id)
+    
+    public function getChat($id)
     {
         try {
             $thread = Thread::findOrFail($id);
@@ -102,7 +97,9 @@ class MessagesController extends Controller
         $users = User::whereNotIn('id', $thread->participantsUserIds($userId))->get();
         $thread->markAsRead($userId);
         $thread->load('messages.user');
-        return $thread->messages;
+        $messages = $thread->messages;
+        // return $messages;
+        return view('messenger.chat', compact('messages', 'users'));
     }
 
     /**
