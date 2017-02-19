@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\User;
+use App\Models\Bid;
 use App\Models\Notification;
 use App\Http\Controllers\Controller;
 
@@ -26,7 +27,10 @@ class UserController extends Controller
     public function showNotifications()
     {
         $user = auth()->user();
-        return view('user.notifications', compact('user'));
+        $notifications = $user->notifications()->get();
+        // $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product');
+        // return $bid;
+        return view('user.notifications', compact('notifications'));
     }
 
     public function showSingleNotification($notification)
