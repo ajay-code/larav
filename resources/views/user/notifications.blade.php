@@ -9,7 +9,7 @@
 
                     @foreach($notifications as $notification)
                         @if( $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product'))
-                            {{ $bid->id }}
+                            
                         @endif
                     @endforeach
                         {{-- <table class="table table-hover">

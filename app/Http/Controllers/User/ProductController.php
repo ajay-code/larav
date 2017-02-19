@@ -90,7 +90,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $product->load('user', 'photos');
-        return $product;
+        // return $product->subcategory;
+        return view('user.editwish', compact('product'));
     }
 
     /**
