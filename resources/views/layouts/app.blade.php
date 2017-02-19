@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     <link href="{{assetUrl('/css/app.css')}}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/notify_message.css">
 
     <!-- Scripts -->
     <script>
