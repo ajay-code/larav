@@ -7,6 +7,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Laravel Messenger</title>
 
+    <link rel="shortcut icon" href="{{url('/favicon.ico')}}">
+    <link href="{{assetUrl('css/app.css')}}" rel="stylesheet">
+    {{-- <link href="{{assetUrl('css/prettyPhoto.css')}}" rel="stylesheet"> --}}
+    <link href="{{assetUrl('css/style.css')}}" rel="stylesheet">
+
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 

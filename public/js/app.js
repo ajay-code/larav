@@ -37275,6 +37275,9 @@ module.exports = exports['default'];
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
+/* styles */
+__webpack_require__(219)
+
 /* script */
 __vue_exports__ = __webpack_require__(157)
 
@@ -46168,6 +46171,7 @@ module.exports = __vue_exports__
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('form', {
+    staticClass: "message-form",
     attrs: {
       "action": _vm.action
     },
@@ -46186,7 +46190,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       value: (_vm.form.message),
       expression: "form.message"
     }],
-    staticClass: "form-control",
+    staticClass: "form-control message-form__textarea",
     attrs: {
       "name": "message"
     },
@@ -46212,11 +46216,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: "form-group"
   }, [_c('button', {
-    staticClass: "btn btn-primary form-control",
+    staticClass: "btn btn-primary form-control message-form__submit",
     attrs: {
       "type": "submit"
     }
-  }, [_vm._v("Submit")])])
+  }, [_vm._v("Submit "), _c('i', {
+    staticClass: "fa fa-paper-plane-o"
+  })])])
 }]}
 module.exports.render._withStripped = true
 if (false) {
@@ -46787,6 +46793,46 @@ module.exports = __webpack_require__(152);
 /***/ (function(module, exports) {
 
 module.exports = new Vue();
+
+/***/ }),
+/* 218 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(171)();
+// imports
+
+
+// module
+exports.push([module.i, "\n.message-form__textarea{\n    min-height: 20px !important;\n}\n.message-form__submit{\n    border-radius: 5px !important;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 219 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(218);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(197)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-1d51ef98!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./form.vue", function() {
+			var newContent = require("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-1d51ef98!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./form.vue");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ })
 /******/ ]);

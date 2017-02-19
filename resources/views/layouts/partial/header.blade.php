@@ -39,6 +39,13 @@
                                 <li><a href="{{ url('/addwish') }}"><i class="fa fa-plus"></i> Add wish</a></li>
                                 <li><a href="{{ url('/wishlist') }}"><i class="fa fa-star"></i> Wishlist</a></li>
                                 <li>
+                                    <a href="{{ url('/messages') }}" > <i class="fa fa-envelope  "></i>
+                                    @if(Auth::check())
+                                        @include('messenger.unread-count')
+                                    @endif
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="{{ url('/notifications') }}">
                                         <i class="fa fa-bell">
                                             @if(auth()->user()->unreadNotifications ->count() > 0)
@@ -104,7 +111,7 @@
                                 </ul>
                             </li>
                             <li><a href="{{ url('/contact') }}" class="{{ active('contact') }}">Contact</a></li>
-                            <li><a href="{{ url('/messages') }}" class="{{ active('message') }}">Message</a></li>
+                            
 
                         </ul>
                     </div>

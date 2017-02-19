@@ -4,6 +4,9 @@
 Route::get('/addwish', 'User\ProductController@create');
 Route::post('/addWish', 'User\ProductController@store');
 
+/*Edit WishList*/
+Route::get('wish/{product}/edit', 'User\ProductController@edit');
+
 
 /*Showing All the User Wistlist of Products*/
 Route::get('/wishlist', 'User\ProductController@index');

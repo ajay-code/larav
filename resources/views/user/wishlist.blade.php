@@ -36,6 +36,9 @@
                                             <div class="wish-tag">{{ $tag['name'] }}</div>
                                         @endforeach
                                     @endif
+                                    <a href="{{ url('wish/'.$product->id.'/edit') }}">
+                                        <span class="pull-right"><i class="fa fa-edit"></i></span>
+                                    </a>
                                 </div>
                                 <div class="wish-title">
                                     <h3>{{ $product->title }}.</h3>

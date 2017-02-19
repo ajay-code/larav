@@ -1,9 +1,9 @@
-<template>
+ <template>
     <div>
-        <form :action="action" @submit.prevent="post">    
+        <form :action="action" @submit.prevent="post" class="message-form">    
             <!-- Message Form Input -->
             <div class="form-group">
-                <textarea name="message" v-model="form.message" class="form-control"
+                <textarea class="form-control message-form__textarea" name="message" v-model="form.message" 
                 @keydown="form.errors.clear()"
                 ></textarea>
                 <span   class="text-danger"
@@ -13,7 +13,7 @@
             </div>
             <!-- Submit Form Input -->
             <div class="form-group">
-                <button type="submit" class="btn btn-primary form-control">Submit</button>
+                <button type="submit" class="btn btn-primary form-control message-form__submit" >Submit <i class="fa fa-paper-plane-o"></i></button>
             </div>
             
         </form>
@@ -44,3 +44,13 @@
         }
     }
 </script>
+
+<style>
+    .message-form__textarea{
+        min-height: 20px !important;
+    }
+
+    .message-form__submit{
+        border-radius: 5px !important;
+    }
+</style>

@@ -67,7 +67,8 @@ class NewBid extends Notification
     {
         return [
             'message' => $this->bid->message,
-            'from' => $this->from->name
+            'from' => $this->from->name,
+            'bid' => $this->bid->id
         ];
     }
 }
