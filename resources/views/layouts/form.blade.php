@@ -12,7 +12,8 @@
     <link href="{{assetUrl('css/app.css')}}" rel="stylesheet">
     {{-- <link href="{{assetUrl('css/prettyPhoto.css')}}" rel="stylesheet"> --}}
     <link href="{{assetUrl('css/style.css')}}" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="/css/notify_message.css">
+    
     <!--[if lt IE 9]>
     <script src="{{assetUrl('js/html5shiv.js')}}"></script>
     <script src="{{ assetUrl('js/respond.min.js') }}"></script>

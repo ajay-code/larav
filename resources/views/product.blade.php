@@ -50,6 +50,18 @@
                         </div>
                         <div class="col-sm-7">
                             <div class="product-information"><!--/product-information-->
+                                
+                                <div class="wish-tags">
+                                    @if (!$product->tagged->isEmpty())
+                                        @foreach($product->tags as $tag)
+                                            <div class="wish-tag">{{ $tag['name'] }}</div>
+                                        @endforeach
+                                    @endif
+
+                                    <a href="#" class="pull-right">
+                                        <div class="wish-tag"><i class="fa fa-heart"></i>Add to my wishlist</div>
+                                    </a>
+                                </div>
                                 <h2>{{ $product->title }}</h2>
 
                                 <p>{{ nl2br($product->description) }} </p>

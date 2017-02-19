@@ -8,3 +8,4 @@ Homestead.yaml
 .env
 .idea/workspace.xml
 .idea/*
+webpack.mix.js

@@ -1,59 +1,36 @@
 @extends('layouts.main') 
 
 @section('content')
-<section>
+<section id="notify">
     <div class="container">
-        <div class="row">
-            <div class="col-sm-10 col-sm-offset-1 notifications">
+        <div class="row real-con ">
+            <div class="col-sm-12 notifications">
                     <h3 class="notifications__header">All Notifications...</h3>
 
                     @foreach($notifications as $notification)
                         @if( $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product'))
-                            {{ $bid->id }}
+                            
+                            <div class="col-sm-6 each-noti">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="#">
+                                            <img class="media-object" src="{{$bid->product->getPrimaryPhoto()->thumbnailUrl()}}" alt="...">
+                                        </a>
+                                        <p class="pro-title"><a href="#">{{$bid->product->title}}</a></p>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading"><span>From: </span>{{$bid->seller->name}}</h4>
+                                        <p>{{$bid->message}}</p>
+                                        <p class="specific-color">${{$bid->budget}}</p>
+                                        <div class="media-footer pull-right">
+                                            <span><a href="">Go to <i class="glyphicon glyphicon-envelope"></i></a></span>
+                                            <span>{{$bid->created_at->diffForHumans()}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
                     @endforeach
-                        {{-- <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Message</th>
-                                    <th>
-                                        <span class="pull-right">
-                                            From
-                                        </span>
-                                    </th>
-                                       <th>
-                                        <span class="pull-right">
-                                            At
-                                        </span>
-                                    </th>
-                                </tr>
-                            </thead>
-                        @foreach ($user->notifications as $notification)
-                            <tr class="notifications__item clickable-row"  
-                                data-href="{{ url('/notifications/'.$notification->id) }}">
-                                <td>
-                                    <b>#{{ $loop->iteration }}</b>
-                                </td>
-                                <td>
-                                    <span> 
-                                        {{ $notification->data['message'] }}
-                                    </span>
-                                </td>
-                                <td >
-                                    <span class="pull-right">
-                                        {{ $notification->data['from'] }}  
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="pull-right">
-                                        {{ $notification->created_at->diffForHumans() }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </table>
- --}}
                     
                 </div>
             </div>
