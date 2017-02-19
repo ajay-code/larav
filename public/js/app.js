@@ -37985,6 +37985,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         refresh: function refresh() {
+
             axios.get(this.postUrl + "/chat").then(function (res) {
                 window.$('#chat').html(res.data);
             });

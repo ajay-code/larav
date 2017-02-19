@@ -32,6 +32,7 @@ import eventHub from "../../event";
         },
         methods: {
             refresh(){
+                 
                 axios.get(this.postUrl + "/chat").then(res=>{
                     window.$('#chat').html(res.data);
                 });
