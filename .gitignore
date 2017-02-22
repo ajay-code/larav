@@ -9,3 +9,4 @@ Homestead.yaml
 .idea/workspace.xml
 .idea/*
 webpack.mix.js
+/storage/products_index.index
