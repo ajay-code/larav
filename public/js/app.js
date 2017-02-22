@@ -38092,6 +38092,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -41285,7 +41287,7 @@ exports = module.exports = __webpack_require__(32)();
 
 
 // module
-exports.push([module.i, "\n.message-color-one[data-v-6f3074a9]{\n    background:#ccc !important;\n}\n", ""]);
+exports.push([module.i, "\n.message-color[data-v-6f3074a9]{\n    background:#ccc !important;\n}\n", ""]);
 
 // exports
 
@@ -46293,6 +46295,9 @@ module.exports = __vue_exports__
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
+/* styles */
+__webpack_require__(229)
+
 /* script */
 __vue_exports__ = __webpack_require__(160)
 
@@ -46314,6 +46319,7 @@ if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "messageLeft"
 }__vue_options__.render = __vue_template__.render
 __vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+__vue_options__._scopeId = "data-v-c2f912ec"
 
 /* hot reload */
 if (false) {(function () {
@@ -46694,7 +46700,7 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "media col-sm-6 col-sm-offset-6"
+    staticClass: "media col-sm-6 col-sm-offset-6 message-color"
   }, [_c('a', {
     staticClass: "pull-right",
     attrs: {
@@ -46707,9 +46713,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "alt": _vm.message.user.name
     }
   })]), _vm._v(" "), _c('div', {
-    staticClass: "media-body message-color-one"
+    staticClass: "media-body message-color-one "
   }, [_c('div', {
-    staticClass: "pull-right"
+    staticClass: "pull-left"
   }, [_c('h5', {
     staticClass: "media-heading",
     domProps: {
@@ -46773,7 +46779,7 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "media col-sm-6"
+    staticClass: "media col-sm-6 message-color"
   }, [_c('a', {
     staticClass: "pull-left",
     attrs: {
@@ -46787,6 +46793,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   })]), _vm._v(" "), _c('div', {
     staticClass: "media-body"
+  }, [_c('div', {
+    staticClass: "pull-right"
   }, [_c('h5', {
     staticClass: "media-heading",
     domProps: {
@@ -46802,7 +46810,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     domProps: {
       "textContent": _vm._s(_vm.at)
     }
-  })])])])])
+  })])])])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -48600,6 +48608,46 @@ LoadingOverlay - A flexible loading overlay jQuery plugin
     
 }(jQuery));
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 228 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(32)();
+// imports
+
+
+// module
+exports.push([module.i, "\n.message-color[data-v-c2f912ec]{\n    background-color: #ccc !important;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 229 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(228);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(34)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-c2f912ec&scoped=true!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./messageLeft.vue", function() {
+			var newContent = require("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-c2f912ec&scoped=true!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./messageLeft.vue");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ })
 /******/ ]);

@@ -1,12 +1,12 @@
 <template>
-    <div class="media col-sm-6 col-sm-offset-6">
+    <div class="media col-sm-6 col-sm-offset-6 message-color">
             <a class="pull-right" href="#">
                 <img :src="imageUrl"
                     :alt="message.user.name" class="img-circle">
             </a>
 
-            <div class="media-body message-color-one">
-                <div class="pull-right">
+            <div class="media-body message-color-one ">
+                <div class="pull-left">
                     <h5 class="media-heading" v-text="message.user.name"> </h5>
                     <p v-text="message.body"></p>
                     <div class="text-muted">
@@ -42,7 +42,7 @@ import moment from "moment";
 </script>
 
 <style scoped>
-    .message-color-one{
+    .message-color{
         background:#ccc !important;
     }
 </style>
