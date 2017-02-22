@@ -2,6 +2,7 @@
 
 <div class="alert col-sm-12 {{ $class }} border-bottom">
     {{-- get Image For Display --}}
+    {{ $thread->id }}
         @foreach($thread->getParticipants() as $user)
             @unless(Auth::user()->id == $user->user_id)
                 <div class="col-sm-4">
