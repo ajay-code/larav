@@ -84,13 +84,16 @@ class HomeController extends Controller
             $productCopy->photos()->save($photo->replicate());
         }
 
+
         // Attach The Product To the Current User
-        $productCopy->user()->associate(auth()->user());
+        $productCopy->user()->associate(auth()->user()->id);
 
         // Save The Product
+        
         $productCopy->save();
+        
 
-        return $productCopy;
+        return 1;
 
     }
 }
