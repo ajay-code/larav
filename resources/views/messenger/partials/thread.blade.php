@@ -1,17 +1,16 @@
 <?php $class = $thread->isUnread(Auth::id()) ? 'alert-info' : ''; ?>
 
-<div class="alert col-sm-12 {{ $class }}">
+<div class="alert col-sm-12 {{ $class }} border-bottom">
     {{-- get Image For Display --}}
         @foreach($thread->getParticipants() as $user)
             @unless(Auth::user()->id == $user->user_id)
                 <div class="col-sm-4">
-                    @if($user->profile_picture)                
+                    @if($user->profile_picture) 
                         <img src="{{ $user->profile_picture }}" class="thumb-round" alt="">
                     @else
                         <img src="{{ gravatar($user->email) }}" class="thumb-round" alt="">
                     @endif
                 </div>
-                
             @endunless
         @endforeach
 

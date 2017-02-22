@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.message')
 
 @section('content')
 <div class="container" id="message-layout">
@@ -11,6 +11,7 @@
     			@each('messenger.partials.thread', $threads, 'thread', 'messenger.partials.no-threads')
 			</div>
 		</div>
+
 		<div class="col-sm-8 messages-container">
 			<div class="row message-title">MESSAGES</div>
 			
