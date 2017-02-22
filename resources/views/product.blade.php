@@ -52,7 +52,9 @@
                                 <div class="wish-tags" style="margin-bottom: 20px;">
                                     @if (!$product->tagged->isEmpty())
                                         @foreach($product->tags as $tag)
-                                            <div class="wish-tag">{{ $tag['name'] }}</div>
+                                            <a href="{{ url('/tag/'.$tag->name) }}">
+                                                <div class="wish-tag">{{ $tag['name'] }}</div>
+                                            </a>
                                         @endforeach
                                     @endif
                                     @if(Auth::check())

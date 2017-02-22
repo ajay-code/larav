@@ -38268,7 +38268,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }),
             bid: false,
             completed: false,
-            chatUrl: ''
+            chatUrl: '/messages'
         };
     },
 

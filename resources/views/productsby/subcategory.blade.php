@@ -27,6 +27,7 @@
                                                 <p>{{ Str::words($product->title, 5) }}</p>
                                                 <a href="{{ url('/products/'.$product->slug) }}" class="btn btn-default add-to-cart"><i
                                                             class="fa fa-shopping-cart"></i>View more</a>
+                                                <p class="user-product">By <span>{{ $product->user->name }}</span></p>
                                             </div>
                                         </div>
                                     </div>

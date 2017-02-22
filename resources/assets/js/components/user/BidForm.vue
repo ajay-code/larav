@@ -56,7 +56,7 @@
                 }),
                 bid: false,
                 completed: false,
-                chatUrl: ''
+                chatUrl: '/messages'
             }
         },
         props: ['slug'],
