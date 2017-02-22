@@ -36,9 +36,37 @@
                                             <div class="wish-tag">{{ $tag['name'] }}</div>
                                         @endforeach
                                     @endif
-                                    <a href="{{ url('wish/'.$product->id.'/edit') }}">
-                                        <span class="pull-right"><i class="fa fa-edit"></i></span>
-                                    </a>
+                                    <span class="pull-right">
+                                        
+                                        <span >
+                                        close Wish
+                                        <a href="{{ url('wish/'.$product->id.'/completed') }}"
+                                                       onclick="event.preventDefault();
+                                                                     document.getElementById('wish-completed-form').submit();">
+                                                        <span class="fa-stack fa-lg">
+                                                          <i class="fa fa-square fa-stack-2x"></i>
+                                                          <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                                        </span>
+                                                    </a>
+
+                                                    <form id="wish-completed-form" action="{{ url('wish/'.$product->id.'/completed') }}" method="POST" style="display: none;">
+                                                        {{ csrf_field() }}
+                                                    </form>
+                                        </span>
+
+                                        {{-- <a href="{{ url('wish/'.$product->id.'/edit') }}">
+                                            <i class="fa fa-edit"></i>
+                                        </a> --}}
+                                        <a href="{{ url('wish/'.$product->id.'/edit') }}" aria-label="edit">
+                                            <span class="fa-stack fa-lg">
+                                              <i class="fa fa-square fa-stack-2x"></i>
+                                              <i class="fa fa-edit fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+
+                                    </span>
+                                    
+
                                 </div>
                                 <div class="wish-title">
                                     <h3>{{ $product->title }}.</h3>

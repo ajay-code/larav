@@ -53,8 +53,6 @@
 }
 .users-container{
 	border:1px solid #F0F0E9;
-	
-
 }
 .message-indi-con{
 	height:587px;
@@ -94,7 +92,6 @@
 }
 .message-body{
 	height:475px;
-	width:103%;
 	border:1px solid #F0F0E9;
 	overflow-y:scroll;
 }
@@ -103,4 +100,16 @@
 	width:103%;
 	margin-bottom: 0px;
 	border:1px solid #333;
+}
+
+.scroll{
+	min-height: 100px;
+	max-height: 400px;
+	overflow-y: scroll; 
+}
+
+.thumbnail-round{
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
 }

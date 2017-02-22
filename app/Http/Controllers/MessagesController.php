@@ -63,6 +63,7 @@ class MessagesController extends Controller
      */
     public function showAjax($id)
     {
+        $threads = Thread::getAllLatest()->get();
         try {
             $thread = Thread::findOrFail($id);
         } catch (ModelNotFoundException $e) {
@@ -78,7 +79,7 @@ class MessagesController extends Controller
         $thread->load('messages.user');
 
 
-        return view('messenger.showvue', compact('thread', 'users'));
+        return view('messenger.showvue', compact('threads','thread', 'users'));
     }
 
     

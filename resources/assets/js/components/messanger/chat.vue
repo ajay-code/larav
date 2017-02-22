@@ -1,13 +1,12 @@
 <template>
-    <div class="col-md-6">
-        <h1 v-text="thread.subject"></h1>
-            <!--  -->
-        <div id="chat">
+    <div>
+        <div id="chat" class="row message-body">
             
         </div>
-
-        <!--  -->
-        <message-form :action="postUrl"> </message-form>   
+        <div class="row">
+        
+            <message-form :action="postUrl"></message-form>   
+        </div>
     </div>
 </template>
 
@@ -24,6 +23,11 @@ import eventHub from "../../event";
         props: ['thread', 'users', 'postUrl'], 
         mounted() {
             this.refresh()
+
+            setTimeout(()=>{
+                window.$('#chat').scrollTop(document.getElementById("chat").scrollHeight);
+            },1000)
+            
             setInterval(()=>{
                 this.refresh()
             },5000)
@@ -32,9 +36,10 @@ import eventHub from "../../event";
         },
         methods: {
             refresh(){
-                 
                 axios.get(this.postUrl + "/chat").then(res=>{
                     window.$('#chat').html(res.data);
+                    
+                   
                 });
             }
         }

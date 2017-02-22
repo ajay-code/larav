@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Bid;
 use Conner\Tagging\Taggable;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +41,11 @@ class Product extends Model
     public function photos()
     {
         return $this->hasMany(Photo::class);
+    }
+
+    public function bids()
+    {
+        return $this->hasMany(Bid::class);
     }
 
     public function attachPhoto($photo)
@@ -81,4 +87,20 @@ class Product extends Model
     {
         return 'products_index';   
     }
+
+    public function madeBid($user = null)
+    {
+
+        if($user){
+            foreach ($this->bids as $bid) {
+                if($user->id == $bid->seller->id){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 }

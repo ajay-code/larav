@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 201);
+/******/ 	return __webpack_require__(__webpack_require__.s = 205);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1884,7 +1884,7 @@ function loadLocale(name) {
             module && module.exports) {
         try {
             oldLocale = globalLocale._abbr;
-            __webpack_require__(174)("./" + name);
+            __webpack_require__(177)("./" + name);
             // because defineLocale currently also sets the global locale, we
             // want to undo that for lazy loaded locales
             getSetGlobalLocale(oldLocale);
@@ -4372,7 +4372,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(199)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(203)(module)))
 
 /***/ }),
 /* 1 */
@@ -15700,7 +15700,7 @@ var _hexToRgb = __webpack_require__(13);
 
 var _removeClass$getTopMargin$fadeIn$show$addClass = __webpack_require__(10);
 
-var _defaultParams = __webpack_require__(148);
+var _defaultParams = __webpack_require__(149);
 
 var _defaultParams2 = _interopRequireWildcard(_defaultParams);
 
@@ -15708,7 +15708,7 @@ var _defaultParams2 = _interopRequireWildcard(_defaultParams);
  * Add modal + overlay to DOM
  */
 
-var _injectedHTML = __webpack_require__(179);
+var _injectedHTML = __webpack_require__(182);
 
 var _injectedHTML2 = _interopRequireWildcard(_injectedHTML);
 
@@ -16778,6 +16778,62 @@ module.exports = function spread(callback) {
 
 /***/ }),
 /* 32 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function() {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		var result = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(item[2]) {
+				result.push("@media " + item[2] + "{" + item[1] + "}");
+			} else {
+				result.push(item[1]);
+			}
+		}
+		return result.join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, global) {var require;/*!
@@ -16916,7 +16972,7 @@ function flush() {
 function attemptVertx() {
   try {
     var r = require;
-    var vertx = __webpack_require__(34);
+    var vertx = __webpack_require__(36);
     vertxNext = vertx.runOnLoop || vertx.runOnContext;
     return useVertxTimer();
   } catch (e) {
@@ -17940,7 +17996,229 @@ return Promise;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(11)))
 
 /***/ }),
-/* 33 */
+/* 34 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+var stylesInDom = {},
+	memoize = function(fn) {
+		var memo;
+		return function () {
+			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+			return memo;
+		};
+	},
+	isOldIE = memoize(function() {
+		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+	}),
+	getHeadElement = memoize(function () {
+		return document.head || document.getElementsByTagName("head")[0];
+	}),
+	singletonElement = null,
+	singletonCounter = 0,
+	styleElementsInsertedAtTop = [];
+
+module.exports = function(list, options) {
+	if(typeof DEBUG !== "undefined" && DEBUG) {
+		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the bottom of <head>.
+	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+	var styles = listToStyles(list);
+	addStylesToDom(styles, options);
+
+	return function update(newList) {
+		var mayRemove = [];
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+		if(newList) {
+			var newStyles = listToStyles(newList);
+			addStylesToDom(newStyles, options);
+		}
+		for(var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+			if(domStyle.refs === 0) {
+				for(var j = 0; j < domStyle.parts.length; j++)
+					domStyle.parts[j]();
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+}
+
+function addStylesToDom(styles, options) {
+	for(var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+		if(domStyle) {
+			domStyle.refs++;
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles(list) {
+	var styles = [];
+	var newStyles = {};
+	for(var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+		if(!newStyles[id])
+			styles.push(newStyles[id] = {id: id, parts: [part]});
+		else
+			newStyles[id].parts.push(part);
+	}
+	return styles;
+}
+
+function insertStyleElement(options, styleElement) {
+	var head = getHeadElement();
+	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+	if (options.insertAt === "top") {
+		if(!lastStyleElementInsertedAtTop) {
+			head.insertBefore(styleElement, head.firstChild);
+		} else if(lastStyleElementInsertedAtTop.nextSibling) {
+			head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			head.appendChild(styleElement);
+		}
+		styleElementsInsertedAtTop.push(styleElement);
+	} else if (options.insertAt === "bottom") {
+		head.appendChild(styleElement);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement(styleElement) {
+	styleElement.parentNode.removeChild(styleElement);
+	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+	if(idx >= 0) {
+		styleElementsInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement(options) {
+	var styleElement = document.createElement("style");
+	styleElement.type = "text/css";
+	insertStyleElement(options, styleElement);
+	return styleElement;
+}
+
+function addStyle(obj, options) {
+	var styleElement, update, remove;
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+		styleElement = singletonElement || (singletonElement = createStyleElement(options));
+		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+	} else {
+		styleElement = createStyleElement(options);
+		update = applyToTag.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle(newObj) {
+		if(newObj) {
+			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+				return;
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag(styleElement, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = styleElement.childNodes;
+		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+		if (childNodes.length) {
+			styleElement.insertBefore(cssNode, childNodes[index]);
+		} else {
+			styleElement.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag(styleElement, obj) {
+	var css = obj.css;
+	var media = obj.media;
+	var sourceMap = obj.sourceMap;
+
+	if (media) {
+		styleElement.setAttribute("media", media);
+	}
+
+	if (sourceMap) {
+		// https://developer.chrome.com/devtools/docs/javascript-debugging
+		// this makes source maps inside style tags work properly in Chrome
+		css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */';
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = css;
+	} else {
+		while(styleElement.firstChild) {
+			styleElement.removeChild(styleElement.firstChild);
+		}
+		styleElement.appendChild(document.createTextNode(css));
+	}
+}
+
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26516,23 +26794,23 @@ module.exports = Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(11)))
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = new Vue();
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Errors__ = __webpack_require__(164);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Errors__ = __webpack_require__(166);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26692,7 +26970,7 @@ var Form = function () {
 /* harmony default export */ __webpack_exports__["a"] = Form;
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports) {
 
 var charenc = {
@@ -26731,70 +27009,14 @@ module.exports = charenc;
 
 
 /***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function() {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		var result = [];
-		for(var i = 0; i < this.length; i++) {
-			var item = this[i];
-			if(item[2]) {
-				result.push("@media " + item[2] + "{" + item[1] + "}");
-			} else {
-				result.push(item[1]);
-			}
-		}
-		return result.join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-
-/***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function(){
-  var crypt = __webpack_require__(169),
-      utf8 = __webpack_require__(37).utf8,
-      isBuffer = __webpack_require__(172),
-      bin = __webpack_require__(37).bin,
+  var crypt = __webpack_require__(171),
+      utf8 = __webpack_require__(39).utf8,
+      isBuffer = __webpack_require__(175),
+      bin = __webpack_require__(39).bin,
 
   // The core
   md5 = function (message, options) {
@@ -26953,7 +27175,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27031,7 +27253,7 @@ return af;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27095,7 +27317,7 @@ return arDz;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27226,7 +27448,7 @@ return arLy;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27291,7 +27513,7 @@ return arMa;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27401,7 +27623,7 @@ return arSa;
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27465,7 +27687,7 @@ return arTn;
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27612,7 +27834,7 @@ return ar;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27722,7 +27944,7 @@ return az;
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27861,7 +28083,7 @@ return be;
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27956,7 +28178,7 @@ return bg;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28080,7 +28302,7 @@ return bn;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28204,7 +28426,7 @@ return bo;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28317,7 +28539,7 @@ return br;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28465,7 +28687,7 @@ return bs;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28551,7 +28773,7 @@ return ca;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28728,7 +28950,7 @@ return cs;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28796,7 +29018,7 @@ return cv;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28882,7 +29104,7 @@ return cy;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28947,7 +29169,7 @@ return da;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29031,7 +29253,7 @@ return deAt;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29114,7 +29336,7 @@ return de;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29219,7 +29441,7 @@ return dv;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29322,7 +29544,7 @@ return el;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29394,7 +29616,7 @@ return enAu;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29462,7 +29684,7 @@ return enCa;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29534,7 +29756,7 @@ return enGb;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29606,7 +29828,7 @@ return enIe;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29678,7 +29900,7 @@ return enNz;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29756,7 +29978,7 @@ return eo;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29841,7 +30063,7 @@ return esDo;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29927,7 +30149,7 @@ return es;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30012,7 +30234,7 @@ return et;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30083,7 +30305,7 @@ return eu;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30195,7 +30417,7 @@ return fa;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30307,7 +30529,7 @@ return fi;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30372,7 +30594,7 @@ return fo;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30437,7 +30659,7 @@ return frCa;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30506,7 +30728,7 @@ return frCh;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30575,7 +30797,7 @@ return fr;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30653,7 +30875,7 @@ return fy;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30734,7 +30956,7 @@ return gd;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30816,7 +31038,7 @@ return gl;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30920,7 +31142,7 @@ return he;
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31049,7 +31271,7 @@ return hi;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31199,7 +31421,7 @@ return hr;
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31313,7 +31535,7 @@ return hu;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31413,7 +31635,7 @@ return hyAm;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31501,7 +31723,7 @@ return id;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31633,7 +31855,7 @@ return is;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31708,7 +31930,7 @@ return it;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31789,7 +32011,7 @@ return ja;
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31877,7 +32099,7 @@ return jv;
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -31971,7 +32193,7 @@ return ka;
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32063,7 +32285,7 @@ return kk;
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32126,7 +32348,7 @@ return km;
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32196,7 +32418,7 @@ return ko;
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32289,7 +32511,7 @@ return ky;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32431,7 +32653,7 @@ return lb;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32506,7 +32728,7 @@ return lo;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32628,7 +32850,7 @@ return lt;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32730,7 +32952,7 @@ return lv;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32846,7 +33068,7 @@ return me;
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -32915,7 +33137,7 @@ return mi;
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33010,7 +33232,7 @@ return mk;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33096,7 +33318,7 @@ return ml;
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33260,7 +33482,7 @@ return mr;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33348,7 +33570,7 @@ return msMy;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33435,7 +33657,7 @@ return ms;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33536,7 +33758,7 @@ return my;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33604,7 +33826,7 @@ return nb;
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33732,7 +33954,7 @@ return ne;
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33823,7 +34045,7 @@ return nlBe;
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33914,7 +34136,7 @@ return nl;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -33979,7 +34201,7 @@ return nn;
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34108,7 +34330,7 @@ return paIn;
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34218,7 +34440,7 @@ return pl;
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34284,7 +34506,7 @@ return ptBr;
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34354,7 +34576,7 @@ return pt;
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34434,7 +34656,7 @@ return ro;
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34622,7 +34844,7 @@ return ru;
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34688,7 +34910,7 @@ return se;
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34764,7 +34986,7 @@ return si;
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -34919,7 +35141,7 @@ return sk;
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35086,7 +35308,7 @@ return sl;
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35161,7 +35383,7 @@ return sq;
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35276,7 +35498,7 @@ return srCyrl;
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35391,7 +35613,7 @@ return sr;
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35485,7 +35707,7 @@ return ss;
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35559,7 +35781,7 @@ return sv;
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35623,7 +35845,7 @@ return sw;
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35758,7 +35980,7 @@ return ta;
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35852,7 +36074,7 @@ return te;
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35925,7 +36147,7 @@ return tet;
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -35997,7 +36219,7 @@ return th;
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36064,7 +36286,7 @@ return tlPh;
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36189,7 +36411,7 @@ return tlh;
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36284,7 +36506,7 @@ return tr;
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36380,7 +36602,7 @@ return tzl;
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36443,7 +36665,7 @@ return tzmLatn;
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36506,7 +36728,7 @@ return tzm;
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36657,7 +36879,7 @@ return uk;
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36720,7 +36942,7 @@ return uz;
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36804,7 +37026,7 @@ return vi;
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36877,7 +37099,7 @@ return xPseudo;
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -36942,7 +37164,7 @@ return yo;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37074,7 +37296,7 @@ return zhCn;
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37184,7 +37406,7 @@ return zhHk;
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -37293,7 +37515,7 @@ return zhTw;
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37331,20 +37553,20 @@ exports['default'] = defaultParams;
 module.exports = exports['default'];
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* styles */
-__webpack_require__(197)
+__webpack_require__(200)
 
 /* script */
-__vue_exports__ = __webpack_require__(157)
+__vue_exports__ = __webpack_require__(159)
 
 /* template */
-var __vue_template__ = __webpack_require__(190)
+var __vue_template__ = __webpack_require__(193)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -37380,228 +37602,6 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 150 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-var stylesInDom = {},
-	memoize = function(fn) {
-		var memo;
-		return function () {
-			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-			return memo;
-		};
-	},
-	isOldIE = memoize(function() {
-		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-	}),
-	getHeadElement = memoize(function () {
-		return document.head || document.getElementsByTagName("head")[0];
-	}),
-	singletonElement = null,
-	singletonCounter = 0,
-	styleElementsInsertedAtTop = [];
-
-module.exports = function(list, options) {
-	if(typeof DEBUG !== "undefined" && DEBUG) {
-		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-	}
-
-	options = options || {};
-	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-	// tags it will allow on a page
-	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-	// By default, add <style> tags to the bottom of <head>.
-	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-	var styles = listToStyles(list);
-	addStylesToDom(styles, options);
-
-	return function update(newList) {
-		var mayRemove = [];
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			domStyle.refs--;
-			mayRemove.push(domStyle);
-		}
-		if(newList) {
-			var newStyles = listToStyles(newList);
-			addStylesToDom(newStyles, options);
-		}
-		for(var i = 0; i < mayRemove.length; i++) {
-			var domStyle = mayRemove[i];
-			if(domStyle.refs === 0) {
-				for(var j = 0; j < domStyle.parts.length; j++)
-					domStyle.parts[j]();
-				delete stylesInDom[domStyle.id];
-			}
-		}
-	};
-}
-
-function addStylesToDom(styles, options) {
-	for(var i = 0; i < styles.length; i++) {
-		var item = styles[i];
-		var domStyle = stylesInDom[item.id];
-		if(domStyle) {
-			domStyle.refs++;
-			for(var j = 0; j < domStyle.parts.length; j++) {
-				domStyle.parts[j](item.parts[j]);
-			}
-			for(; j < item.parts.length; j++) {
-				domStyle.parts.push(addStyle(item.parts[j], options));
-			}
-		} else {
-			var parts = [];
-			for(var j = 0; j < item.parts.length; j++) {
-				parts.push(addStyle(item.parts[j], options));
-			}
-			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-		}
-	}
-}
-
-function listToStyles(list) {
-	var styles = [];
-	var newStyles = {};
-	for(var i = 0; i < list.length; i++) {
-		var item = list[i];
-		var id = item[0];
-		var css = item[1];
-		var media = item[2];
-		var sourceMap = item[3];
-		var part = {css: css, media: media, sourceMap: sourceMap};
-		if(!newStyles[id])
-			styles.push(newStyles[id] = {id: id, parts: [part]});
-		else
-			newStyles[id].parts.push(part);
-	}
-	return styles;
-}
-
-function insertStyleElement(options, styleElement) {
-	var head = getHeadElement();
-	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-	if (options.insertAt === "top") {
-		if(!lastStyleElementInsertedAtTop) {
-			head.insertBefore(styleElement, head.firstChild);
-		} else if(lastStyleElementInsertedAtTop.nextSibling) {
-			head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-		} else {
-			head.appendChild(styleElement);
-		}
-		styleElementsInsertedAtTop.push(styleElement);
-	} else if (options.insertAt === "bottom") {
-		head.appendChild(styleElement);
-	} else {
-		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-	}
-}
-
-function removeStyleElement(styleElement) {
-	styleElement.parentNode.removeChild(styleElement);
-	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-	if(idx >= 0) {
-		styleElementsInsertedAtTop.splice(idx, 1);
-	}
-}
-
-function createStyleElement(options) {
-	var styleElement = document.createElement("style");
-	styleElement.type = "text/css";
-	insertStyleElement(options, styleElement);
-	return styleElement;
-}
-
-function addStyle(obj, options) {
-	var styleElement, update, remove;
-
-	if (options.singleton) {
-		var styleIndex = singletonCounter++;
-		styleElement = singletonElement || (singletonElement = createStyleElement(options));
-		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-	} else {
-		styleElement = createStyleElement(options);
-		update = applyToTag.bind(null, styleElement);
-		remove = function() {
-			removeStyleElement(styleElement);
-		};
-	}
-
-	update(obj);
-
-	return function updateStyle(newObj) {
-		if(newObj) {
-			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-				return;
-			update(obj = newObj);
-		} else {
-			remove();
-		}
-	};
-}
-
-var replaceText = (function () {
-	var textStore = [];
-
-	return function (index, replacement) {
-		textStore[index] = replacement;
-		return textStore.filter(Boolean).join('\n');
-	};
-})();
-
-function applyToSingletonTag(styleElement, index, remove, obj) {
-	var css = remove ? "" : obj.css;
-
-	if (styleElement.styleSheet) {
-		styleElement.styleSheet.cssText = replaceText(index, css);
-	} else {
-		var cssNode = document.createTextNode(css);
-		var childNodes = styleElement.childNodes;
-		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-		if (childNodes.length) {
-			styleElement.insertBefore(cssNode, childNodes[index]);
-		} else {
-			styleElement.appendChild(cssNode);
-		}
-	}
-}
-
-function applyToTag(styleElement, obj) {
-	var css = obj.css;
-	var media = obj.media;
-	var sourceMap = obj.sourceMap;
-
-	if (media) {
-		styleElement.setAttribute("media", media);
-	}
-
-	if (sourceMap) {
-		// https://developer.chrome.com/devtools/docs/javascript-debugging
-		// this makes source maps inside style tags work properly in Chrome
-		css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */';
-		// http://stackoverflow.com/a/26603875
-		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-	}
-
-	if (styleElement.styleSheet) {
-		styleElement.styleSheet.cssText = css;
-	} else {
-		while(styleElement.firstChild) {
-			styleElement.removeChild(styleElement.firstChild);
-		}
-		styleElement.appendChild(document.createTextNode(css));
-	}
-}
-
-
-/***/ }),
 /* 151 */,
 /* 152 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -37614,7 +37614,7 @@ function applyToTag(styleElement, obj) {
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(163);
+__webpack_require__(165);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -37625,12 +37625,12 @@ __webpack_require__(163);
 // Vue.config.debug = false;
 // Vue.config.silent = true;
 
-Vue.component('add-to-wishlist', __webpack_require__(187));
-Vue.component('bid-form', __webpack_require__(188));
-Vue.component('chat', __webpack_require__(184));
-Vue.component('message-left', __webpack_require__(185));
-Vue.component('message-right', __webpack_require__(186));
-Vue.component('message-form', __webpack_require__(149));
+Vue.component('add-to-wishlist', __webpack_require__(190));
+Vue.component('bid-form', __webpack_require__(191));
+Vue.component('chat', __webpack_require__(187));
+Vue.component('message-left', __webpack_require__(188));
+Vue.component('message-right', __webpack_require__(189));
+Vue.component('message-form', __webpack_require__(150));
 
 new Vue({
   el: '#app',
@@ -37641,6 +37641,18 @@ autosize(document.querySelectorAll('*[data-autosize]'));
 
 /***/ }),
 /* 153 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 154 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -37938,18 +37950,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 154 */,
-/* 155 */,
-/* 156 */
+/* 156 */,
+/* 157 */,
+/* 158 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form__ = __webpack_require__(149);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form__ = __webpack_require__(150);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__event__);
-//
 //
 //
 //
@@ -37976,6 +37987,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var _this = this;
 
         this.refresh();
+
+        setTimeout(function () {
+            window.$('#chat').scrollTop(document.getElementById("chat").scrollHeight);
+        }, 1000);
+
         setInterval(function () {
             _this.refresh();
         }, 5000);
@@ -37985,7 +38001,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         refresh: function refresh() {
-
             axios.get(this.postUrl + "/chat").then(function (res) {
                 window.$('#chat').html(res.data);
             });
@@ -37994,13 +38009,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 };
 
 /***/ }),
-/* 157 */
+/* 159 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form_Form__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form_Form__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__event___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__event__);
 //
 //
@@ -38050,105 +38065,105 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 };
 
 /***/ }),
-/* 158 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_md5__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = {
-    props: ['message'],
-    data: function data() {
-        return {};
-    },
-
-    computed: {
-        imageUrl: function imageUrl() {
-            return "//www.gravatar.com/avatar/" + __WEBPACK_IMPORTED_MODULE_0_md5___default()(this.message.user.email) + "?s=64&d=mm";
-        },
-        at: function at() {
-            return __WEBPACK_IMPORTED_MODULE_1_moment___default.a.utc(this.message.created_at).fromNow();
-        }
-    },
-    mounted: function mounted() {}
-};
-
-/***/ }),
-/* 159 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_md5__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = {
-    props: ['message'],
-    data: function data() {
-        return {};
-    },
-
-    computed: {
-        imageUrl: function imageUrl() {
-            return "//www.gravatar.com/avatar/" + __WEBPACK_IMPORTED_MODULE_0_md5___default()(this.message.user.email) + "?s=64&d=mm";
-        },
-        at: function at() {
-            return __WEBPACK_IMPORTED_MODULE_1_moment___default.a.utc(this.message.created_at).fromNow();
-        }
-    },
-    mounted: function mounted() {}
-};
-
-/***/ }),
 /* 160 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_md5__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = {
+    props: ['message'],
+    data: function data() {
+        return {};
+    },
+
+    computed: {
+        imageUrl: function imageUrl() {
+            return "//www.gravatar.com/avatar/" + __WEBPACK_IMPORTED_MODULE_0_md5___default()(this.message.user.email) + "?s=64&d=mm";
+        },
+        at: function at() {
+            return __WEBPACK_IMPORTED_MODULE_1_moment___default.a.utc(this.message.created_at).fromNow();
+        }
+    },
+    mounted: function mounted() {}
+};
+
+/***/ }),
+/* 161 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_md5___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_md5__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = {
+    props: ['message'],
+    data: function data() {
+        return {};
+    },
+
+    computed: {
+        imageUrl: function imageUrl() {
+            return "//www.gravatar.com/avatar/" + __WEBPACK_IMPORTED_MODULE_0_md5___default()(this.message.user.email) + "?s=64&d=mm";
+        },
+        at: function at() {
+            return __WEBPACK_IMPORTED_MODULE_1_moment___default.a.utc(this.message.created_at).fromNow();
+        }
+    },
+    mounted: function mounted() {}
+};
+
+/***/ }),
+/* 162 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -38187,12 +38202,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 };
 
 /***/ }),
-/* 161 */
+/* 163 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form_Form__ = __webpack_require__(36);
+/* WEBPACK VAR INJECTION */(function($) {Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__form_Form__ = __webpack_require__(38);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -38233,7 +38263,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             form: new __WEBPACK_IMPORTED_MODULE_0__form_Form__["a" /* default */]({
                 budget: '',
                 message: ''
-            })
+            }),
+            bid: false,
+            completed: false,
+            chatUrl: ''
         };
     },
 
@@ -38244,17 +38277,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         onSubmit: function onSubmit() {
             var _this = this;
 
+            $('body').LoadingOverlay('show');
             this.form.post('/products/' + this.slug + '/bid').then(function (res) {
-                console.log(res);
+                $('body').LoadingOverlay('hide');
+                _this.completed = true;
+                window.swal({
+                    title: "Success",
+                    text: "The bid was made successfully",
+                    type: "info"
+                });
                 _this.form.clear();
             });
         }
     }
 };
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(3)))
 
 /***/ }),
-/* 162 */,
-/* 163 */
+/* 164 */,
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_jQuery) {
@@ -38267,13 +38308,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 window.$ = __webpack_provided_window_dot_jQuery = __webpack_require__(3);
 
+__webpack_require__(220);
+
+__webpack_require__(227);
+
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean
  * and simple, leaving you to focus on building your next great project.
  */
 
-window.Vue = __webpack_require__(33);
+window.Vue = __webpack_require__(35);
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -38281,7 +38326,7 @@ window.Vue = __webpack_require__(33);
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.Promise = __webpack_require__(32).Promise;
+window.Promise = __webpack_require__(33).Promise;
 
 window.axios = __webpack_require__(14);
 
@@ -38303,17 +38348,17 @@ window.axios.defaults.headers.common = {
 // });
 
 // Project libraries
-__webpack_require__(181);
-autosize = __webpack_require__(153);
-__webpack_require__(175);
-bootstrap = __webpack_require__(168);
-__webpack_require__(165);
-__webpack_require__(166);
+__webpack_require__(184);
+autosize = __webpack_require__(155);
+__webpack_require__(178);
+bootstrap = __webpack_require__(170);
 __webpack_require__(167);
+__webpack_require__(168);
+__webpack_require__(169);
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 164 */
+/* 166 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -38405,7 +38450,7 @@ var Errors = function () {
 /* harmony default export */ __webpack_exports__["a"] = Errors;
 
 /***/ }),
-/* 165 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {(function ($, window, document) {
@@ -38579,7 +38624,7 @@ var Errors = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 166 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {(function ($) {
@@ -38661,7 +38706,7 @@ var Errors = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {/*scroll to top*/
@@ -38706,10 +38751,33 @@ $(document).ready(function ($) {
         window.document.location = $(this).data("href");
     });
 });
+
+$(window).on('load', function () {
+    // The slider being synced must be initialized first
+    $('#carousel').flexslider({
+        animation: "slide",
+        controlNav: false,
+        animationLoop: false,
+        slideshow: false,
+        itemWidth: 100,
+        itemMargin: 5,
+        asNavFor: '#slider'
+    });
+
+    $('#slider').flexslider({
+        animation: "slide",
+        controlNav: false,
+        animationLoop: false,
+        slideshow: false,
+        sync: "#carousel",
+        prevText: "",
+        nextText: ""
+    });
+});
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(jQuery) {/*!
@@ -41093,7 +41161,7 @@ if (typeof jQuery === 'undefined') {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports) {
 
 (function() {
@@ -41195,35 +41263,49 @@ if (typeof jQuery === 'undefined') {
 
 
 /***/ }),
-/* 170 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(38)();
-// imports
-
-
-// module
-exports.push([module.i, "\n.message-form__textarea{\n    min-height: 20px !important;\n}\n.message-form__submit{\n    border-radius: 5px !important;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 171 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(38)();
-// imports
-
-
-// module
-exports.push([module.i, "\na[data-v-76d09dfa]{\n    text-decoration: none;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
 /* 172 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(32)();
+// imports
+
+
+// module
+exports.push([module.i, "\n.message-form__textarea{\n    min-height:20px !important;\n    height: 80px !important;\n}\n.message-form__submit{\n    border-radius: 5px !important;\n    color: white;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(32)();
+// imports
+
+
+// module
+exports.push([module.i, "\n.message-color-one[data-v-6f3074a9]{\n    background:#ccc !important;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 174 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(32)();
+// imports
+
+
+// module
+exports.push([module.i, "\na[data-v-76d09dfa]{\n    text-decoration: none;\n}\nbutton[data-v-76d09dfa]{\n    box-shadow: none;\n    border: 1px solid #FE980F;\n    color: #fff;\n    background: #fe980f;\n    border-radius:3px;\n}\n.add-to-my-wish[data-v-76d09dfa]{\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 175 */
 /***/ (function(module, exports) {
 
 /*!
@@ -41250,7 +41332,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 173 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -41394,226 +41476,226 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 }));
 
 /***/ }),
-/* 174 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 40,
-	"./af.js": 40,
-	"./ar": 46,
-	"./ar-dz": 41,
-	"./ar-dz.js": 41,
-	"./ar-ly": 42,
-	"./ar-ly.js": 42,
-	"./ar-ma": 43,
-	"./ar-ma.js": 43,
-	"./ar-sa": 44,
-	"./ar-sa.js": 44,
-	"./ar-tn": 45,
-	"./ar-tn.js": 45,
-	"./ar.js": 46,
-	"./az": 47,
-	"./az.js": 47,
-	"./be": 48,
-	"./be.js": 48,
-	"./bg": 49,
-	"./bg.js": 49,
-	"./bn": 50,
-	"./bn.js": 50,
-	"./bo": 51,
-	"./bo.js": 51,
-	"./br": 52,
-	"./br.js": 52,
-	"./bs": 53,
-	"./bs.js": 53,
-	"./ca": 54,
-	"./ca.js": 54,
-	"./cs": 55,
-	"./cs.js": 55,
-	"./cv": 56,
-	"./cv.js": 56,
-	"./cy": 57,
-	"./cy.js": 57,
-	"./da": 58,
-	"./da.js": 58,
-	"./de": 60,
-	"./de-at": 59,
-	"./de-at.js": 59,
-	"./de.js": 60,
-	"./dv": 61,
-	"./dv.js": 61,
-	"./el": 62,
-	"./el.js": 62,
-	"./en-au": 63,
-	"./en-au.js": 63,
-	"./en-ca": 64,
-	"./en-ca.js": 64,
-	"./en-gb": 65,
-	"./en-gb.js": 65,
-	"./en-ie": 66,
-	"./en-ie.js": 66,
-	"./en-nz": 67,
-	"./en-nz.js": 67,
-	"./eo": 68,
-	"./eo.js": 68,
-	"./es": 70,
-	"./es-do": 69,
-	"./es-do.js": 69,
-	"./es.js": 70,
-	"./et": 71,
-	"./et.js": 71,
-	"./eu": 72,
-	"./eu.js": 72,
-	"./fa": 73,
-	"./fa.js": 73,
-	"./fi": 74,
-	"./fi.js": 74,
-	"./fo": 75,
-	"./fo.js": 75,
-	"./fr": 78,
-	"./fr-ca": 76,
-	"./fr-ca.js": 76,
-	"./fr-ch": 77,
-	"./fr-ch.js": 77,
-	"./fr.js": 78,
-	"./fy": 79,
-	"./fy.js": 79,
-	"./gd": 80,
-	"./gd.js": 80,
-	"./gl": 81,
-	"./gl.js": 81,
-	"./he": 82,
-	"./he.js": 82,
-	"./hi": 83,
-	"./hi.js": 83,
-	"./hr": 84,
-	"./hr.js": 84,
-	"./hu": 85,
-	"./hu.js": 85,
-	"./hy-am": 86,
-	"./hy-am.js": 86,
-	"./id": 87,
-	"./id.js": 87,
-	"./is": 88,
-	"./is.js": 88,
-	"./it": 89,
-	"./it.js": 89,
-	"./ja": 90,
-	"./ja.js": 90,
-	"./jv": 91,
-	"./jv.js": 91,
-	"./ka": 92,
-	"./ka.js": 92,
-	"./kk": 93,
-	"./kk.js": 93,
-	"./km": 94,
-	"./km.js": 94,
-	"./ko": 95,
-	"./ko.js": 95,
-	"./ky": 96,
-	"./ky.js": 96,
-	"./lb": 97,
-	"./lb.js": 97,
-	"./lo": 98,
-	"./lo.js": 98,
-	"./lt": 99,
-	"./lt.js": 99,
-	"./lv": 100,
-	"./lv.js": 100,
-	"./me": 101,
-	"./me.js": 101,
-	"./mi": 102,
-	"./mi.js": 102,
-	"./mk": 103,
-	"./mk.js": 103,
-	"./ml": 104,
-	"./ml.js": 104,
-	"./mr": 105,
-	"./mr.js": 105,
-	"./ms": 107,
-	"./ms-my": 106,
-	"./ms-my.js": 106,
-	"./ms.js": 107,
-	"./my": 108,
-	"./my.js": 108,
-	"./nb": 109,
-	"./nb.js": 109,
-	"./ne": 110,
-	"./ne.js": 110,
-	"./nl": 112,
-	"./nl-be": 111,
-	"./nl-be.js": 111,
-	"./nl.js": 112,
-	"./nn": 113,
-	"./nn.js": 113,
-	"./pa-in": 114,
-	"./pa-in.js": 114,
-	"./pl": 115,
-	"./pl.js": 115,
-	"./pt": 117,
-	"./pt-br": 116,
-	"./pt-br.js": 116,
-	"./pt.js": 117,
-	"./ro": 118,
-	"./ro.js": 118,
-	"./ru": 119,
-	"./ru.js": 119,
-	"./se": 120,
-	"./se.js": 120,
-	"./si": 121,
-	"./si.js": 121,
-	"./sk": 122,
-	"./sk.js": 122,
-	"./sl": 123,
-	"./sl.js": 123,
-	"./sq": 124,
-	"./sq.js": 124,
-	"./sr": 126,
-	"./sr-cyrl": 125,
-	"./sr-cyrl.js": 125,
-	"./sr.js": 126,
-	"./ss": 127,
-	"./ss.js": 127,
-	"./sv": 128,
-	"./sv.js": 128,
-	"./sw": 129,
-	"./sw.js": 129,
-	"./ta": 130,
-	"./ta.js": 130,
-	"./te": 131,
-	"./te.js": 131,
-	"./tet": 132,
-	"./tet.js": 132,
-	"./th": 133,
-	"./th.js": 133,
-	"./tl-ph": 134,
-	"./tl-ph.js": 134,
-	"./tlh": 135,
-	"./tlh.js": 135,
-	"./tr": 136,
-	"./tr.js": 136,
-	"./tzl": 137,
-	"./tzl.js": 137,
-	"./tzm": 139,
-	"./tzm-latn": 138,
-	"./tzm-latn.js": 138,
-	"./tzm.js": 139,
-	"./uk": 140,
-	"./uk.js": 140,
-	"./uz": 141,
-	"./uz.js": 141,
-	"./vi": 142,
-	"./vi.js": 142,
-	"./x-pseudo": 143,
-	"./x-pseudo.js": 143,
-	"./yo": 144,
-	"./yo.js": 144,
-	"./zh-cn": 145,
-	"./zh-cn.js": 145,
-	"./zh-hk": 146,
-	"./zh-hk.js": 146,
-	"./zh-tw": 147,
-	"./zh-tw.js": 147
+	"./af": 41,
+	"./af.js": 41,
+	"./ar": 47,
+	"./ar-dz": 42,
+	"./ar-dz.js": 42,
+	"./ar-ly": 43,
+	"./ar-ly.js": 43,
+	"./ar-ma": 44,
+	"./ar-ma.js": 44,
+	"./ar-sa": 45,
+	"./ar-sa.js": 45,
+	"./ar-tn": 46,
+	"./ar-tn.js": 46,
+	"./ar.js": 47,
+	"./az": 48,
+	"./az.js": 48,
+	"./be": 49,
+	"./be.js": 49,
+	"./bg": 50,
+	"./bg.js": 50,
+	"./bn": 51,
+	"./bn.js": 51,
+	"./bo": 52,
+	"./bo.js": 52,
+	"./br": 53,
+	"./br.js": 53,
+	"./bs": 54,
+	"./bs.js": 54,
+	"./ca": 55,
+	"./ca.js": 55,
+	"./cs": 56,
+	"./cs.js": 56,
+	"./cv": 57,
+	"./cv.js": 57,
+	"./cy": 58,
+	"./cy.js": 58,
+	"./da": 59,
+	"./da.js": 59,
+	"./de": 61,
+	"./de-at": 60,
+	"./de-at.js": 60,
+	"./de.js": 61,
+	"./dv": 62,
+	"./dv.js": 62,
+	"./el": 63,
+	"./el.js": 63,
+	"./en-au": 64,
+	"./en-au.js": 64,
+	"./en-ca": 65,
+	"./en-ca.js": 65,
+	"./en-gb": 66,
+	"./en-gb.js": 66,
+	"./en-ie": 67,
+	"./en-ie.js": 67,
+	"./en-nz": 68,
+	"./en-nz.js": 68,
+	"./eo": 69,
+	"./eo.js": 69,
+	"./es": 71,
+	"./es-do": 70,
+	"./es-do.js": 70,
+	"./es.js": 71,
+	"./et": 72,
+	"./et.js": 72,
+	"./eu": 73,
+	"./eu.js": 73,
+	"./fa": 74,
+	"./fa.js": 74,
+	"./fi": 75,
+	"./fi.js": 75,
+	"./fo": 76,
+	"./fo.js": 76,
+	"./fr": 79,
+	"./fr-ca": 77,
+	"./fr-ca.js": 77,
+	"./fr-ch": 78,
+	"./fr-ch.js": 78,
+	"./fr.js": 79,
+	"./fy": 80,
+	"./fy.js": 80,
+	"./gd": 81,
+	"./gd.js": 81,
+	"./gl": 82,
+	"./gl.js": 82,
+	"./he": 83,
+	"./he.js": 83,
+	"./hi": 84,
+	"./hi.js": 84,
+	"./hr": 85,
+	"./hr.js": 85,
+	"./hu": 86,
+	"./hu.js": 86,
+	"./hy-am": 87,
+	"./hy-am.js": 87,
+	"./id": 88,
+	"./id.js": 88,
+	"./is": 89,
+	"./is.js": 89,
+	"./it": 90,
+	"./it.js": 90,
+	"./ja": 91,
+	"./ja.js": 91,
+	"./jv": 92,
+	"./jv.js": 92,
+	"./ka": 93,
+	"./ka.js": 93,
+	"./kk": 94,
+	"./kk.js": 94,
+	"./km": 95,
+	"./km.js": 95,
+	"./ko": 96,
+	"./ko.js": 96,
+	"./ky": 97,
+	"./ky.js": 97,
+	"./lb": 98,
+	"./lb.js": 98,
+	"./lo": 99,
+	"./lo.js": 99,
+	"./lt": 100,
+	"./lt.js": 100,
+	"./lv": 101,
+	"./lv.js": 101,
+	"./me": 102,
+	"./me.js": 102,
+	"./mi": 103,
+	"./mi.js": 103,
+	"./mk": 104,
+	"./mk.js": 104,
+	"./ml": 105,
+	"./ml.js": 105,
+	"./mr": 106,
+	"./mr.js": 106,
+	"./ms": 108,
+	"./ms-my": 107,
+	"./ms-my.js": 107,
+	"./ms.js": 108,
+	"./my": 109,
+	"./my.js": 109,
+	"./nb": 110,
+	"./nb.js": 110,
+	"./ne": 111,
+	"./ne.js": 111,
+	"./nl": 113,
+	"./nl-be": 112,
+	"./nl-be.js": 112,
+	"./nl.js": 113,
+	"./nn": 114,
+	"./nn.js": 114,
+	"./pa-in": 115,
+	"./pa-in.js": 115,
+	"./pl": 116,
+	"./pl.js": 116,
+	"./pt": 118,
+	"./pt-br": 117,
+	"./pt-br.js": 117,
+	"./pt.js": 118,
+	"./ro": 119,
+	"./ro.js": 119,
+	"./ru": 120,
+	"./ru.js": 120,
+	"./se": 121,
+	"./se.js": 121,
+	"./si": 122,
+	"./si.js": 122,
+	"./sk": 123,
+	"./sk.js": 123,
+	"./sl": 124,
+	"./sl.js": 124,
+	"./sq": 125,
+	"./sq.js": 125,
+	"./sr": 127,
+	"./sr-cyrl": 126,
+	"./sr-cyrl.js": 126,
+	"./sr.js": 127,
+	"./ss": 128,
+	"./ss.js": 128,
+	"./sv": 129,
+	"./sv.js": 129,
+	"./sw": 130,
+	"./sw.js": 130,
+	"./ta": 131,
+	"./ta.js": 131,
+	"./te": 132,
+	"./te.js": 132,
+	"./tet": 133,
+	"./tet.js": 133,
+	"./th": 134,
+	"./th.js": 134,
+	"./tl-ph": 135,
+	"./tl-ph.js": 135,
+	"./tlh": 136,
+	"./tlh.js": 136,
+	"./tr": 137,
+	"./tr.js": 137,
+	"./tzl": 138,
+	"./tzl.js": 138,
+	"./tzm": 140,
+	"./tzm-latn": 139,
+	"./tzm-latn.js": 139,
+	"./tzm.js": 140,
+	"./uk": 141,
+	"./uk.js": 141,
+	"./uz": 142,
+	"./uz.js": 142,
+	"./vi": 143,
+	"./vi.js": 143,
+	"./x-pseudo": 144,
+	"./x-pseudo.js": 144,
+	"./yo": 145,
+	"./yo.js": 145,
+	"./zh-cn": 146,
+	"./zh-cn.js": 146,
+	"./zh-hk": 147,
+	"./zh-hk.js": 147,
+	"./zh-tw": 148,
+	"./zh-tw.js": 148
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -41629,11 +41711,11 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 174;
+webpackContext.id = 177;
 
 
 /***/ }),
-/* 175 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -41657,7 +41739,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 (function(root, factory) {
 	if (true) {
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3),__webpack_require__(176),__webpack_require__(173)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3),__webpack_require__(179),__webpack_require__(176)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -44834,7 +44916,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }));
 
 /***/ }),
-/* 176 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -45343,7 +45425,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 177 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45484,7 +45566,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 /***/ }),
-/* 178 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45569,7 +45651,7 @@ exports['default'] = handleKeyDown;
 module.exports = exports['default'];
 
 /***/ }),
-/* 179 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45617,7 +45699,7 @@ exports["default"] = injectedHTML;
 module.exports = exports["default"];
 
 /***/ }),
-/* 180 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45848,7 +45930,7 @@ exports['default'] = setParameters;
 module.exports = exports['default'];
 
 /***/ }),
-/* 181 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45883,19 +45965,19 @@ var _sweetAlertInitialize$getModal$getOverlay$getInput$setFocusStyle$openModal$r
 
 // Handle button events and keyboard events
 
-var _handleButton$handleConfirm$handleCancel = __webpack_require__(177);
+var _handleButton$handleConfirm$handleCancel = __webpack_require__(180);
 
-var _handleKeyDown = __webpack_require__(178);
+var _handleKeyDown = __webpack_require__(181);
 
 var _handleKeyDown2 = _interopRequireWildcard(_handleKeyDown);
 
 // Default values
 
-var _defaultParams = __webpack_require__(148);
+var _defaultParams = __webpack_require__(149);
 
 var _defaultParams2 = _interopRequireWildcard(_defaultParams);
 
-var _setParameters = __webpack_require__(180);
+var _setParameters = __webpack_require__(183);
 
 var _setParameters2 = _interopRequireWildcard(_setParameters);
 
@@ -46157,19 +46239,19 @@ if (typeof window !== 'undefined') {
 module.exports = exports['default'];
 
 /***/ }),
-/* 182 */,
-/* 183 */,
-/* 184 */
+/* 185 */,
+/* 186 */,
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* script */
-__vue_exports__ = __webpack_require__(156)
+__vue_exports__ = __webpack_require__(158)
 
 /* template */
-var __vue_template__ = __webpack_require__(192)
+var __vue_template__ = __webpack_require__(195)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -46205,17 +46287,17 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 185 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* script */
-__vue_exports__ = __webpack_require__(158)
+__vue_exports__ = __webpack_require__(160)
 
 /* template */
-var __vue_template__ = __webpack_require__(195)
+var __vue_template__ = __webpack_require__(198)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -46251,17 +46333,20 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 186 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
+/* styles */
+__webpack_require__(201)
+
 /* script */
-__vue_exports__ = __webpack_require__(159)
+__vue_exports__ = __webpack_require__(161)
 
 /* template */
-var __vue_template__ = __webpack_require__(193)
+var __vue_template__ = __webpack_require__(196)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -46278,6 +46363,7 @@ if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "messageRight"
 }__vue_options__.render = __vue_template__.render
 __vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+__vue_options__._scopeId = "data-v-6f3074a9"
 
 /* hot reload */
 if (false) {(function () {
@@ -46297,20 +46383,20 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 187 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* styles */
-__webpack_require__(198)
+__webpack_require__(202)
 
 /* script */
-__vue_exports__ = __webpack_require__(160)
+__vue_exports__ = __webpack_require__(162)
 
 /* template */
-var __vue_template__ = __webpack_require__(194)
+var __vue_template__ = __webpack_require__(197)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -46347,17 +46433,20 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 188 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
+/* styles */
+__webpack_require__(226)
+
 /* script */
-__vue_exports__ = __webpack_require__(161)
+__vue_exports__ = __webpack_require__(163)
 
 /* template */
-var __vue_template__ = __webpack_require__(191)
+var __vue_template__ = __webpack_require__(194)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -46374,6 +46463,7 @@ if(typeof __vue_options__.name === "undefined") {
   __vue_options__.name = "BidForm"
 }__vue_options__.render = __vue_template__.render
 __vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+__vue_options__._scopeId = "data-v-27fa9c97"
 
 /* hot reload */
 if (false) {(function () {
@@ -46393,12 +46483,14 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 189 */,
-/* 190 */
+/* 192 */,
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('form', {
+  return _c('div', {
+    staticClass: "margin-20"
+  }, [_c('form', {
     staticClass: "message-form",
     attrs: {
       "action": _vm.action
@@ -46410,7 +46502,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }, [_c('div', {
-    staticClass: "form-group"
+    staticClass: "form-group col-sm-9"
   }, [_c('textarea', {
     directives: [{
       name: "model",
@@ -46442,7 +46534,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }) : _vm._e()]), _vm._v(" "), _vm._m(0)])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "form-group"
+    staticClass: "form-group col-sm-3"
   }, [_c('button', {
     staticClass: "btn btn-primary form-control message-form__submit",
     attrs: {
@@ -46461,11 +46553,19 @@ if (false) {
 }
 
 /***/ }),
-/* 191 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('form', {
+  return _c('div', [(!_vm.bid) ? _c('div', {
+    on: {
+      "click": function($event) {
+        _vm.bid = true
+      }
+    }
+  }, [_c('button', {
+    staticClass: "btn btn-default bid-btn"
+  }, [_vm._v("\n        Make a Bid\n    ")])]) : _vm._e(), _vm._v(" "), (_vm.bid && !_vm.completed) ? _c('form', {
     on: {
       "submit": function($event) {
         $event.preventDefault();
@@ -46542,11 +46642,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }) : _vm._e()]), _vm._v(" "), _c('div', {
     staticClass: "form-group"
   }, [_c('button', {
-    staticClass: "btn btn-default",
+    staticClass: "btn btn-default bid-btn",
     attrs: {
       "disabled": _vm.form.errors.any()
     }
-  }, [_vm._v("Send Proposal")])])])
+  }, [_vm._v("Send Proposal")])])]) : _vm._e(), _vm._v(" "), (_vm.completed) ? _c('div', [_c('a', {
+    attrs: {
+      "href": _vm.chatUrl
+    }
+  }, [_c('button', {
+    staticClass: "btn btn-default chat-btn"
+  }, [_vm._v("\n                Start Chatting    \n            ")])])]) : _vm._e()])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -46557,25 +46663,22 @@ if (false) {
 }
 
 /***/ }),
-/* 192 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "col-md-6"
-  }, [_c('h1', {
-    domProps: {
-      "textContent": _vm._s(_vm.thread.subject)
-    }
-  }), _vm._v(" "), _c('div', {
+  return _c('div', [_c('div', {
+    staticClass: "row message-body",
     attrs: {
       "id": "chat"
     }
-  }), _vm._v(" "), _c('message-form', {
+  }), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_c('message-form', {
     attrs: {
       "action": _vm.postUrl
     }
-  })], 1)
+  })], 1)])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -46586,12 +46689,12 @@ if (false) {
 }
 
 /***/ }),
-/* 193 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "media"
+    staticClass: "media col-sm-6 col-sm-offset-6"
   }, [_c('a', {
     staticClass: "pull-right",
     attrs: {
@@ -46604,7 +46707,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "alt": _vm.message.user.name
     }
   })]), _vm._v(" "), _c('div', {
-    staticClass: "media-body "
+    staticClass: "media-body message-color-one"
   }, [_c('div', {
     staticClass: "pull-right"
   }, [_c('h5', {
@@ -46633,7 +46736,7 @@ if (false) {
 }
 
 /***/ }),
-/* 194 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -46648,11 +46751,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }, [_c('button', {
-    staticClass: "btn btn-orange",
+    staticClass: "btn-orange",
     attrs: {
       "disabled": _vm.disabled
     }
-  }, [_vm._v("\n        Add To My WishList\n    ")])])
+  }, [_c('i', {
+    staticClass: "fa fa-heart"
+  }), _vm._v(" Add To My WishList\n    ")])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -46663,12 +46768,12 @@ if (false) {
 }
 
 /***/ }),
-/* 195 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "media"
+    staticClass: "media col-sm-6"
   }, [_c('a', {
     staticClass: "pull-left",
     attrs: {
@@ -46708,17 +46813,17 @@ if (false) {
 }
 
 /***/ }),
-/* 196 */,
-/* 197 */
+/* 199 */,
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(170);
+var content = __webpack_require__(172);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(150)(content, {});
+var update = __webpack_require__(34)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -46735,16 +46840,42 @@ if(false) {
 }
 
 /***/ }),
-/* 198 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(171);
+var content = __webpack_require__(173);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(150)(content, {});
+var update = __webpack_require__(34)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-6f3074a9&scoped=true!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./messageRight.vue", function() {
+			var newContent = require("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-6f3074a9&scoped=true!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./messageRight.vue");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 202 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(174);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(34)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -46761,7 +46892,7 @@ if(false) {
 }
 
 /***/ }),
-/* 199 */
+/* 203 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -46789,12 +46920,1686 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 200 */,
-/* 201 */
+/* 204 */,
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(152);
+__webpack_require__(152);
+__webpack_require__(153);
+module.exports = __webpack_require__(154);
 
+
+/***/ }),
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(jQuery, setImmediate) {/*
+ * jQuery FlexSlider v2.6.3
+ * Copyright 2012 WooThemes
+ * Contributing Author: Tyler Smith
+ */
+;
+(function ($) {
+
+  var focused = true;
+
+  //FlexSlider: Object Instance
+  $.flexslider = function(el, options) {
+    var slider = $(el);
+
+    // making variables public
+    slider.vars = $.extend({}, $.flexslider.defaults, options);
+
+    var namespace = slider.vars.namespace,
+        msGesture = window.navigator && window.navigator.msPointerEnabled && window.MSGesture,
+        touch = (( "ontouchstart" in window ) || msGesture || window.DocumentTouch && document instanceof DocumentTouch) && slider.vars.touch,
+        // depricating this idea, as devices are being released with both of these events
+        eventType = "click touchend MSPointerUp keyup",
+        watchedEvent = "",
+        watchedEventClearTimer,
+        vertical = slider.vars.direction === "vertical",
+        reverse = slider.vars.reverse,
+        carousel = (slider.vars.itemWidth > 0),
+        fade = slider.vars.animation === "fade",
+        asNav = slider.vars.asNavFor !== "",
+        methods = {};
+
+    // Store a reference to the slider object
+    $.data(el, "flexslider", slider);
+
+    // Private slider methods
+    methods = {
+      init: function() {
+        slider.animating = false;
+        // Get current slide and make sure it is a number
+        slider.currentSlide = parseInt( ( slider.vars.startAt ? slider.vars.startAt : 0), 10 );
+        if ( isNaN( slider.currentSlide ) ) { slider.currentSlide = 0; }
+        slider.animatingTo = slider.currentSlide;
+        slider.atEnd = (slider.currentSlide === 0 || slider.currentSlide === slider.last);
+        slider.containerSelector = slider.vars.selector.substr(0,slider.vars.selector.search(' '));
+        slider.slides = $(slider.vars.selector, slider);
+        slider.container = $(slider.containerSelector, slider);
+        slider.count = slider.slides.length;
+        // SYNC:
+        slider.syncExists = $(slider.vars.sync).length > 0;
+        // SLIDE:
+        if (slider.vars.animation === "slide") { slider.vars.animation = "swing"; }
+        slider.prop = (vertical) ? "top" : "marginLeft";
+        slider.args = {};
+        // SLIDESHOW:
+        slider.manualPause = false;
+        slider.stopped = false;
+        //PAUSE WHEN INVISIBLE
+        slider.started = false;
+        slider.startTimeout = null;
+        // TOUCH/USECSS:
+        slider.transitions = !slider.vars.video && !fade && slider.vars.useCSS && (function() {
+          var obj = document.createElement('div'),
+              props = ['perspectiveProperty', 'WebkitPerspective', 'MozPerspective', 'OPerspective', 'msPerspective'];
+          for (var i in props) {
+            if ( obj.style[ props[i] ] !== undefined ) {
+              slider.pfx = props[i].replace('Perspective','').toLowerCase();
+              slider.prop = "-" + slider.pfx + "-transform";
+              return true;
+            }
+          }
+          return false;
+        }());
+        slider.ensureAnimationEnd = '';
+        // CONTROLSCONTAINER:
+        if (slider.vars.controlsContainer !== "") slider.controlsContainer = $(slider.vars.controlsContainer).length > 0 && $(slider.vars.controlsContainer);
+        // MANUAL:
+        if (slider.vars.manualControls !== "") slider.manualControls = $(slider.vars.manualControls).length > 0 && $(slider.vars.manualControls);
+
+        // CUSTOM DIRECTION NAV:
+        if (slider.vars.customDirectionNav !== "") slider.customDirectionNav = $(slider.vars.customDirectionNav).length === 2 && $(slider.vars.customDirectionNav);
+
+        // RANDOMIZE:
+        if (slider.vars.randomize) {
+          slider.slides.sort(function() { return (Math.round(Math.random())-0.5); });
+          slider.container.empty().append(slider.slides);
+        }
+
+        slider.doMath();
+
+        // INIT
+        slider.setup("init");
+
+        // CONTROLNAV:
+        if (slider.vars.controlNav) { methods.controlNav.setup(); }
+
+        // DIRECTIONNAV:
+        if (slider.vars.directionNav) { methods.directionNav.setup(); }
+
+        // KEYBOARD:
+        if (slider.vars.keyboard && ($(slider.containerSelector).length === 1 || slider.vars.multipleKeyboard)) {
+          $(document).bind('keyup', function(event) {
+            var keycode = event.keyCode;
+            if (!slider.animating && (keycode === 39 || keycode === 37)) {
+              var target = (keycode === 39) ? slider.getTarget('next') :
+                           (keycode === 37) ? slider.getTarget('prev') : false;
+              slider.flexAnimate(target, slider.vars.pauseOnAction);
+            }
+          });
+        }
+        // MOUSEWHEEL:
+        if (slider.vars.mousewheel) {
+          slider.bind('mousewheel', function(event, delta, deltaX, deltaY) {
+            event.preventDefault();
+            var target = (delta < 0) ? slider.getTarget('next') : slider.getTarget('prev');
+            slider.flexAnimate(target, slider.vars.pauseOnAction);
+          });
+        }
+
+        // PAUSEPLAY
+        if (slider.vars.pausePlay) { methods.pausePlay.setup(); }
+
+        //PAUSE WHEN INVISIBLE
+        if (slider.vars.slideshow && slider.vars.pauseInvisible) { methods.pauseInvisible.init(); }
+
+        // SLIDSESHOW
+        if (slider.vars.slideshow) {
+          if (slider.vars.pauseOnHover) {
+            slider.hover(function() {
+              if (!slider.manualPlay && !slider.manualPause) { slider.pause(); }
+            }, function() {
+              if (!slider.manualPause && !slider.manualPlay && !slider.stopped) { slider.play(); }
+            });
+          }
+          // initialize animation
+          //If we're visible, or we don't use PageVisibility API
+          if(!slider.vars.pauseInvisible || !methods.pauseInvisible.isHidden()) {
+            (slider.vars.initDelay > 0) ? slider.startTimeout = setTimeout(slider.play, slider.vars.initDelay) : slider.play();
+          }
+        }
+
+        // ASNAV:
+        if (asNav) { methods.asNav.setup(); }
+
+        // TOUCH
+        if (touch && slider.vars.touch) { methods.touch(); }
+
+        // FADE&&SMOOTHHEIGHT || SLIDE:
+        if (!fade || (fade && slider.vars.smoothHeight)) { $(window).bind("resize orientationchange focus", methods.resize); }
+
+        slider.find("img").attr("draggable", "false");
+
+        // API: start() Callback
+        setTimeout(function(){
+          slider.vars.start(slider);
+        }, 200);
+      },
+      asNav: {
+        setup: function() {
+          slider.asNav = true;
+          slider.animatingTo = Math.floor(slider.currentSlide/slider.move);
+          slider.currentItem = slider.currentSlide;
+          slider.slides.removeClass(namespace + "active-slide").eq(slider.currentItem).addClass(namespace + "active-slide");
+          if(!msGesture){
+              slider.slides.on(eventType, function(e){
+                e.preventDefault();
+                var $slide = $(this),
+                    target = $slide.index();
+                var posFromLeft = $slide.offset().left - $(slider).scrollLeft(); // Find position of slide relative to left of slider container
+                if( posFromLeft <= 0 && $slide.hasClass( namespace + 'active-slide' ) ) {
+                  slider.flexAnimate(slider.getTarget("prev"), true);
+                } else if (!$(slider.vars.asNavFor).data('flexslider').animating && !$slide.hasClass(namespace + "active-slide")) {
+                  slider.direction = (slider.currentItem < target) ? "next" : "prev";
+                  slider.flexAnimate(target, slider.vars.pauseOnAction, false, true, true);
+                }
+              });
+          }else{
+              el._slider = slider;
+              slider.slides.each(function (){
+                  var that = this;
+                  that._gesture = new MSGesture();
+                  that._gesture.target = that;
+                  that.addEventListener("MSPointerDown", function (e){
+                      e.preventDefault();
+                      if(e.currentTarget._gesture) {
+                        e.currentTarget._gesture.addPointer(e.pointerId);
+                      }
+                  }, false);
+                  that.addEventListener("MSGestureTap", function (e){
+                      e.preventDefault();
+                      var $slide = $(this),
+                          target = $slide.index();
+                      if (!$(slider.vars.asNavFor).data('flexslider').animating && !$slide.hasClass('active')) {
+                          slider.direction = (slider.currentItem < target) ? "next" : "prev";
+                          slider.flexAnimate(target, slider.vars.pauseOnAction, false, true, true);
+                      }
+                  });
+              });
+          }
+        }
+      },
+      controlNav: {
+        setup: function() {
+          if (!slider.manualControls) {
+            methods.controlNav.setupPaging();
+          } else { // MANUALCONTROLS:
+            methods.controlNav.setupManual();
+          }
+        },
+        setupPaging: function() {
+          var type = (slider.vars.controlNav === "thumbnails") ? 'control-thumbs' : 'control-paging',
+              j = 1,
+              item,
+              slide;
+
+          slider.controlNavScaffold = $('<ol class="'+ namespace + 'control-nav ' + namespace + type + '"></ol>');
+
+          if (slider.pagingCount > 1) {
+            for (var i = 0; i < slider.pagingCount; i++) {
+              slide = slider.slides.eq(i);
+              if ( undefined === slide.attr( 'data-thumb-alt' ) ) { slide.attr( 'data-thumb-alt', '' ); }
+              var altText = ( '' !== slide.attr( 'data-thumb-alt' ) ) ? altText = ' alt="' + slide.attr( 'data-thumb-alt' ) + '"' : '';
+              item = (slider.vars.controlNav === "thumbnails") ? '<img src="' + slide.attr( 'data-thumb' ) + '"' + altText + '/>' : '<a href="#">' + j + '</a>';
+              if ( 'thumbnails' === slider.vars.controlNav && true === slider.vars.thumbCaptions ) {
+                var captn = slide.attr( 'data-thumbcaption' );
+                if ( '' !== captn && undefined !== captn ) { item += '<span class="' + namespace + 'caption">' + captn + '</span>'; }
+              }
+              slider.controlNavScaffold.append('<li>' + item + '</li>');
+              j++;
+            }
+          }
+
+          // CONTROLSCONTAINER:
+          (slider.controlsContainer) ? $(slider.controlsContainer).append(slider.controlNavScaffold) : slider.append(slider.controlNavScaffold);
+          methods.controlNav.set();
+
+          methods.controlNav.active();
+
+          slider.controlNavScaffold.delegate('a, img', eventType, function(event) {
+            event.preventDefault();
+
+            if (watchedEvent === "" || watchedEvent === event.type) {
+              var $this = $(this),
+                  target = slider.controlNav.index($this);
+
+              if (!$this.hasClass(namespace + 'active')) {
+                slider.direction = (target > slider.currentSlide) ? "next" : "prev";
+                slider.flexAnimate(target, slider.vars.pauseOnAction);
+              }
+            }
+
+            // setup flags to prevent event duplication
+            if (watchedEvent === "") {
+              watchedEvent = event.type;
+            }
+            methods.setToClearWatchedEvent();
+
+          });
+        },
+        setupManual: function() {
+          slider.controlNav = slider.manualControls;
+          methods.controlNav.active();
+
+          slider.controlNav.bind(eventType, function(event) {
+            event.preventDefault();
+
+            if (watchedEvent === "" || watchedEvent === event.type) {
+              var $this = $(this),
+                  target = slider.controlNav.index($this);
+
+              if (!$this.hasClass(namespace + 'active')) {
+                (target > slider.currentSlide) ? slider.direction = "next" : slider.direction = "prev";
+                slider.flexAnimate(target, slider.vars.pauseOnAction);
+              }
+            }
+
+            // setup flags to prevent event duplication
+            if (watchedEvent === "") {
+              watchedEvent = event.type;
+            }
+            methods.setToClearWatchedEvent();
+          });
+        },
+        set: function() {
+          var selector = (slider.vars.controlNav === "thumbnails") ? 'img' : 'a';
+          slider.controlNav = $('.' + namespace + 'control-nav li ' + selector, (slider.controlsContainer) ? slider.controlsContainer : slider);
+        },
+        active: function() {
+          slider.controlNav.removeClass(namespace + "active").eq(slider.animatingTo).addClass(namespace + "active");
+        },
+        update: function(action, pos) {
+          if (slider.pagingCount > 1 && action === "add") {
+            slider.controlNavScaffold.append($('<li><a href="#">' + slider.count + '</a></li>'));
+          } else if (slider.pagingCount === 1) {
+            slider.controlNavScaffold.find('li').remove();
+          } else {
+            slider.controlNav.eq(pos).closest('li').remove();
+          }
+          methods.controlNav.set();
+          (slider.pagingCount > 1 && slider.pagingCount !== slider.controlNav.length) ? slider.update(pos, action) : methods.controlNav.active();
+        }
+      },
+      directionNav: {
+        setup: function() {
+          var directionNavScaffold = $('<ul class="' + namespace + 'direction-nav"><li class="' + namespace + 'nav-prev"><a class="' + namespace + 'prev" href="#">' + slider.vars.prevText + '</a></li><li class="' + namespace + 'nav-next"><a class="' + namespace + 'next" href="#">' + slider.vars.nextText + '</a></li></ul>');
+
+          // CUSTOM DIRECTION NAV:
+          if (slider.customDirectionNav) {
+            slider.directionNav = slider.customDirectionNav;
+          // CONTROLSCONTAINER:
+          } else if (slider.controlsContainer) {
+            $(slider.controlsContainer).append(directionNavScaffold);
+            slider.directionNav = $('.' + namespace + 'direction-nav li a', slider.controlsContainer);
+          } else {
+            slider.append(directionNavScaffold);
+            slider.directionNav = $('.' + namespace + 'direction-nav li a', slider);
+          }
+
+          methods.directionNav.update();
+
+          slider.directionNav.bind(eventType, function(event) {
+            event.preventDefault();
+            var target;
+
+            if (watchedEvent === "" || watchedEvent === event.type) {
+              target = ($(this).hasClass(namespace + 'next')) ? slider.getTarget('next') : slider.getTarget('prev');
+              slider.flexAnimate(target, slider.vars.pauseOnAction);
+            }
+
+            // setup flags to prevent event duplication
+            if (watchedEvent === "") {
+              watchedEvent = event.type;
+            }
+            methods.setToClearWatchedEvent();
+          });
+        },
+        update: function() {
+          var disabledClass = namespace + 'disabled';
+          if (slider.pagingCount === 1) {
+            slider.directionNav.addClass(disabledClass).attr('tabindex', '-1');
+          } else if (!slider.vars.animationLoop) {
+            if (slider.animatingTo === 0) {
+              slider.directionNav.removeClass(disabledClass).filter('.' + namespace + "prev").addClass(disabledClass).attr('tabindex', '-1');
+            } else if (slider.animatingTo === slider.last) {
+              slider.directionNav.removeClass(disabledClass).filter('.' + namespace + "next").addClass(disabledClass).attr('tabindex', '-1');
+            } else {
+              slider.directionNav.removeClass(disabledClass).removeAttr('tabindex');
+            }
+          } else {
+            slider.directionNav.removeClass(disabledClass).removeAttr('tabindex');
+          }
+        }
+      },
+      pausePlay: {
+        setup: function() {
+          var pausePlayScaffold = $('<div class="' + namespace + 'pauseplay"><a href="#"></a></div>');
+
+          // CONTROLSCONTAINER:
+          if (slider.controlsContainer) {
+            slider.controlsContainer.append(pausePlayScaffold);
+            slider.pausePlay = $('.' + namespace + 'pauseplay a', slider.controlsContainer);
+          } else {
+            slider.append(pausePlayScaffold);
+            slider.pausePlay = $('.' + namespace + 'pauseplay a', slider);
+          }
+
+          methods.pausePlay.update((slider.vars.slideshow) ? namespace + 'pause' : namespace + 'play');
+
+          slider.pausePlay.bind(eventType, function(event) {
+            event.preventDefault();
+
+            if (watchedEvent === "" || watchedEvent === event.type) {
+              if ($(this).hasClass(namespace + 'pause')) {
+                slider.manualPause = true;
+                slider.manualPlay = false;
+                slider.pause();
+              } else {
+                slider.manualPause = false;
+                slider.manualPlay = true;
+                slider.play();
+              }
+            }
+
+            // setup flags to prevent event duplication
+            if (watchedEvent === "") {
+              watchedEvent = event.type;
+            }
+            methods.setToClearWatchedEvent();
+          });
+        },
+        update: function(state) {
+          (state === "play") ? slider.pausePlay.removeClass(namespace + 'pause').addClass(namespace + 'play').html(slider.vars.playText) : slider.pausePlay.removeClass(namespace + 'play').addClass(namespace + 'pause').html(slider.vars.pauseText);
+        }
+      },
+      touch: function() {
+        var startX,
+          startY,
+          offset,
+          cwidth,
+          dx,
+          startT,
+          onTouchStart,
+          onTouchMove,
+          onTouchEnd,
+          scrolling = false,
+          localX = 0,
+          localY = 0,
+          accDx = 0;
+
+        if(!msGesture){
+            onTouchStart = function(e) {
+              if (slider.animating) {
+                e.preventDefault();
+              } else if ( ( window.navigator.msPointerEnabled ) || e.touches.length === 1 ) {
+                slider.pause();
+                // CAROUSEL:
+                cwidth = (vertical) ? slider.h : slider. w;
+                startT = Number(new Date());
+                // CAROUSEL:
+
+                // Local vars for X and Y points.
+                localX = e.touches[0].pageX;
+                localY = e.touches[0].pageY;
+
+                offset = (carousel && reverse && slider.animatingTo === slider.last) ? 0 :
+                         (carousel && reverse) ? slider.limit - (((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.animatingTo) :
+                         (carousel && slider.currentSlide === slider.last) ? slider.limit :
+                         (carousel) ? ((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.currentSlide :
+                         (reverse) ? (slider.last - slider.currentSlide + slider.cloneOffset) * cwidth : (slider.currentSlide + slider.cloneOffset) * cwidth;
+                startX = (vertical) ? localY : localX;
+                startY = (vertical) ? localX : localY;
+
+                el.addEventListener('touchmove', onTouchMove, false);
+                el.addEventListener('touchend', onTouchEnd, false);
+              }
+            };
+
+            onTouchMove = function(e) {
+              // Local vars for X and Y points.
+
+              localX = e.touches[0].pageX;
+              localY = e.touches[0].pageY;
+
+              dx = (vertical) ? startX - localY : startX - localX;
+              scrolling = (vertical) ? (Math.abs(dx) < Math.abs(localX - startY)) : (Math.abs(dx) < Math.abs(localY - startY));
+
+              var fxms = 500;
+
+              if ( ! scrolling || Number( new Date() ) - startT > fxms ) {
+                e.preventDefault();
+                if (!fade && slider.transitions) {
+                  if (!slider.vars.animationLoop) {
+                    dx = dx/((slider.currentSlide === 0 && dx < 0 || slider.currentSlide === slider.last && dx > 0) ? (Math.abs(dx)/cwidth+2) : 1);
+                  }
+                  slider.setProps(offset + dx, "setTouch");
+                }
+              }
+            };
+
+            onTouchEnd = function(e) {
+              // finish the touch by undoing the touch session
+              el.removeEventListener('touchmove', onTouchMove, false);
+
+              if (slider.animatingTo === slider.currentSlide && !scrolling && !(dx === null)) {
+                var updateDx = (reverse) ? -dx : dx,
+                    target = (updateDx > 0) ? slider.getTarget('next') : slider.getTarget('prev');
+
+                if (slider.canAdvance(target) && (Number(new Date()) - startT < 550 && Math.abs(updateDx) > 50 || Math.abs(updateDx) > cwidth/2)) {
+                  slider.flexAnimate(target, slider.vars.pauseOnAction);
+                } else {
+                  if (!fade) { slider.flexAnimate(slider.currentSlide, slider.vars.pauseOnAction, true); }
+                }
+              }
+              el.removeEventListener('touchend', onTouchEnd, false);
+
+              startX = null;
+              startY = null;
+              dx = null;
+              offset = null;
+            };
+
+            el.addEventListener('touchstart', onTouchStart, false);
+        }else{
+            el.style.msTouchAction = "none";
+            el._gesture = new MSGesture();
+            el._gesture.target = el;
+            el.addEventListener("MSPointerDown", onMSPointerDown, false);
+            el._slider = slider;
+            el.addEventListener("MSGestureChange", onMSGestureChange, false);
+            el.addEventListener("MSGestureEnd", onMSGestureEnd, false);
+
+            function onMSPointerDown(e){
+                e.stopPropagation();
+                if (slider.animating) {
+                    e.preventDefault();
+                }else{
+                    slider.pause();
+                    el._gesture.addPointer(e.pointerId);
+                    accDx = 0;
+                    cwidth = (vertical) ? slider.h : slider. w;
+                    startT = Number(new Date());
+                    // CAROUSEL:
+
+                    offset = (carousel && reverse && slider.animatingTo === slider.last) ? 0 :
+                        (carousel && reverse) ? slider.limit - (((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.animatingTo) :
+                            (carousel && slider.currentSlide === slider.last) ? slider.limit :
+                                (carousel) ? ((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.currentSlide :
+                                    (reverse) ? (slider.last - slider.currentSlide + slider.cloneOffset) * cwidth : (slider.currentSlide + slider.cloneOffset) * cwidth;
+                }
+            }
+
+            function onMSGestureChange(e) {
+                e.stopPropagation();
+                var slider = e.target._slider;
+                if(!slider){
+                    return;
+                }
+                var transX = -e.translationX,
+                    transY = -e.translationY;
+
+                //Accumulate translations.
+                accDx = accDx + ((vertical) ? transY : transX);
+                dx = accDx;
+                scrolling = (vertical) ? (Math.abs(accDx) < Math.abs(-transX)) : (Math.abs(accDx) < Math.abs(-transY));
+
+                if(e.detail === e.MSGESTURE_FLAG_INERTIA){
+                    setImmediate(function (){
+                        el._gesture.stop();
+                    });
+
+                    return;
+                }
+
+                if (!scrolling || Number(new Date()) - startT > 500) {
+                    e.preventDefault();
+                    if (!fade && slider.transitions) {
+                        if (!slider.vars.animationLoop) {
+                            dx = accDx / ((slider.currentSlide === 0 && accDx < 0 || slider.currentSlide === slider.last && accDx > 0) ? (Math.abs(accDx) / cwidth + 2) : 1);
+                        }
+                        slider.setProps(offset + dx, "setTouch");
+                    }
+                }
+            }
+
+            function onMSGestureEnd(e) {
+                e.stopPropagation();
+                var slider = e.target._slider;
+                if(!slider){
+                    return;
+                }
+                if (slider.animatingTo === slider.currentSlide && !scrolling && !(dx === null)) {
+                    var updateDx = (reverse) ? -dx : dx,
+                        target = (updateDx > 0) ? slider.getTarget('next') : slider.getTarget('prev');
+
+                    if (slider.canAdvance(target) && (Number(new Date()) - startT < 550 && Math.abs(updateDx) > 50 || Math.abs(updateDx) > cwidth/2)) {
+                        slider.flexAnimate(target, slider.vars.pauseOnAction);
+                    } else {
+                        if (!fade) { slider.flexAnimate(slider.currentSlide, slider.vars.pauseOnAction, true); }
+                    }
+                }
+
+                startX = null;
+                startY = null;
+                dx = null;
+                offset = null;
+                accDx = 0;
+            }
+        }
+      },
+      resize: function() {
+        if (!slider.animating && slider.is(':visible')) {
+          if (!carousel) { slider.doMath(); }
+
+          if (fade) {
+            // SMOOTH HEIGHT:
+            methods.smoothHeight();
+          } else if (carousel) { //CAROUSEL:
+            slider.slides.width(slider.computedW);
+            slider.update(slider.pagingCount);
+            slider.setProps();
+          }
+          else if (vertical) { //VERTICAL:
+            slider.viewport.height(slider.h);
+            slider.setProps(slider.h, "setTotal");
+          } else {
+            // SMOOTH HEIGHT:
+            if (slider.vars.smoothHeight) { methods.smoothHeight(); }
+            slider.newSlides.width(slider.computedW);
+            slider.setProps(slider.computedW, "setTotal");
+          }
+        }
+      },
+      smoothHeight: function(dur) {
+        if (!vertical || fade) {
+          var $obj = (fade) ? slider : slider.viewport;
+          (dur) ? $obj.animate({"height": slider.slides.eq(slider.animatingTo).innerHeight()}, dur) : $obj.innerHeight(slider.slides.eq(slider.animatingTo).innerHeight());
+        }
+      },
+      sync: function(action) {
+        var $obj = $(slider.vars.sync).data("flexslider"),
+            target = slider.animatingTo;
+
+        switch (action) {
+          case "animate": $obj.flexAnimate(target, slider.vars.pauseOnAction, false, true); break;
+          case "play": if (!$obj.playing && !$obj.asNav) { $obj.play(); } break;
+          case "pause": $obj.pause(); break;
+        }
+      },
+      uniqueID: function($clone) {
+        // Append _clone to current level and children elements with id attributes
+        $clone.filter( '[id]' ).add($clone.find( '[id]' )).each(function() {
+          var $this = $(this);
+          $this.attr( 'id', $this.attr( 'id' ) + '_clone' );
+        });
+        return $clone;
+      },
+      pauseInvisible: {
+        visProp: null,
+        init: function() {
+          var visProp = methods.pauseInvisible.getHiddenProp();
+          if (visProp) {
+            var evtname = visProp.replace(/[H|h]idden/,'') + 'visibilitychange';
+            document.addEventListener(evtname, function() {
+              if (methods.pauseInvisible.isHidden()) {
+                if(slider.startTimeout) {
+                  clearTimeout(slider.startTimeout); //If clock is ticking, stop timer and prevent from starting while invisible
+                } else {
+                  slider.pause(); //Or just pause
+                }
+              }
+              else {
+                if(slider.started) {
+                  slider.play(); //Initiated before, just play
+                } else {
+                  if (slider.vars.initDelay > 0) {
+                    setTimeout(slider.play, slider.vars.initDelay);
+                  } else {
+                    slider.play(); //Didn't init before: simply init or wait for it
+                  }
+                }
+              }
+            });
+          }
+        },
+        isHidden: function() {
+          var prop = methods.pauseInvisible.getHiddenProp();
+          if (!prop) {
+            return false;
+          }
+          return document[prop];
+        },
+        getHiddenProp: function() {
+          var prefixes = ['webkit','moz','ms','o'];
+          // if 'hidden' is natively supported just return it
+          if ('hidden' in document) {
+            return 'hidden';
+          }
+          // otherwise loop over all the known prefixes until we find one
+          for ( var i = 0; i < prefixes.length; i++ ) {
+              if ((prefixes[i] + 'Hidden') in document) {
+                return prefixes[i] + 'Hidden';
+              }
+          }
+          // otherwise it's not supported
+          return null;
+        }
+      },
+      setToClearWatchedEvent: function() {
+        clearTimeout(watchedEventClearTimer);
+        watchedEventClearTimer = setTimeout(function() {
+          watchedEvent = "";
+        }, 3000);
+      }
+    };
+
+    // public methods
+    slider.flexAnimate = function(target, pause, override, withSync, fromNav) {
+      if (!slider.vars.animationLoop && target !== slider.currentSlide) {
+        slider.direction = (target > slider.currentSlide) ? "next" : "prev";
+      }
+
+      if (asNav && slider.pagingCount === 1) slider.direction = (slider.currentItem < target) ? "next" : "prev";
+
+      if (!slider.animating && (slider.canAdvance(target, fromNav) || override) && slider.is(":visible")) {
+        if (asNav && withSync) {
+          var master = $(slider.vars.asNavFor).data('flexslider');
+          slider.atEnd = target === 0 || target === slider.count - 1;
+          master.flexAnimate(target, true, false, true, fromNav);
+          slider.direction = (slider.currentItem < target) ? "next" : "prev";
+          master.direction = slider.direction;
+
+          if (Math.ceil((target + 1)/slider.visible) - 1 !== slider.currentSlide && target !== 0) {
+            slider.currentItem = target;
+            slider.slides.removeClass(namespace + "active-slide").eq(target).addClass(namespace + "active-slide");
+            target = Math.floor(target/slider.visible);
+          } else {
+            slider.currentItem = target;
+            slider.slides.removeClass(namespace + "active-slide").eq(target).addClass(namespace + "active-slide");
+            return false;
+          }
+        }
+
+        slider.animating = true;
+        slider.animatingTo = target;
+
+        // SLIDESHOW:
+        if (pause) { slider.pause(); }
+
+        // API: before() animation Callback
+        slider.vars.before(slider);
+
+        // SYNC:
+        if (slider.syncExists && !fromNav) { methods.sync("animate"); }
+
+        // CONTROLNAV
+        if (slider.vars.controlNav) { methods.controlNav.active(); }
+
+        // !CAROUSEL:
+        // CANDIDATE: slide active class (for add/remove slide)
+        if (!carousel) { slider.slides.removeClass(namespace + 'active-slide').eq(target).addClass(namespace + 'active-slide'); }
+
+        // INFINITE LOOP:
+        // CANDIDATE: atEnd
+        slider.atEnd = target === 0 || target === slider.last;
+
+        // DIRECTIONNAV:
+        if (slider.vars.directionNav) { methods.directionNav.update(); }
+
+        if (target === slider.last) {
+          // API: end() of cycle Callback
+          slider.vars.end(slider);
+          // SLIDESHOW && !INFINITE LOOP:
+          if (!slider.vars.animationLoop) { slider.pause(); }
+        }
+
+        // SLIDE:
+        if (!fade) {
+          var dimension = (vertical) ? slider.slides.filter(':first').height() : slider.computedW,
+              margin, slideString, calcNext;
+
+          // INFINITE LOOP / REVERSE:
+          if (carousel) {
+            margin = slider.vars.itemMargin;
+            calcNext = ((slider.itemW + margin) * slider.move) * slider.animatingTo;
+            slideString = (calcNext > slider.limit && slider.visible !== 1) ? slider.limit : calcNext;
+          } else if (slider.currentSlide === 0 && target === slider.count - 1 && slider.vars.animationLoop && slider.direction !== "next") {
+            slideString = (reverse) ? (slider.count + slider.cloneOffset) * dimension : 0;
+          } else if (slider.currentSlide === slider.last && target === 0 && slider.vars.animationLoop && slider.direction !== "prev") {
+            slideString = (reverse) ? 0 : (slider.count + 1) * dimension;
+          } else {
+            slideString = (reverse) ? ((slider.count - 1) - target + slider.cloneOffset) * dimension : (target + slider.cloneOffset) * dimension;
+          }
+          slider.setProps(slideString, "", slider.vars.animationSpeed);
+          if (slider.transitions) {
+            if (!slider.vars.animationLoop || !slider.atEnd) {
+              slider.animating = false;
+              slider.currentSlide = slider.animatingTo;
+            }
+
+            // Unbind previous transitionEnd events and re-bind new transitionEnd event
+            slider.container.unbind("webkitTransitionEnd transitionend");
+            slider.container.bind("webkitTransitionEnd transitionend", function() {
+              clearTimeout(slider.ensureAnimationEnd);
+              slider.wrapup(dimension);
+            });
+
+            // Insurance for the ever-so-fickle transitionEnd event
+            clearTimeout(slider.ensureAnimationEnd);
+            slider.ensureAnimationEnd = setTimeout(function() {
+              slider.wrapup(dimension);
+            }, slider.vars.animationSpeed + 100);
+
+          } else {
+            slider.container.animate(slider.args, slider.vars.animationSpeed, slider.vars.easing, function(){
+              slider.wrapup(dimension);
+            });
+          }
+        } else { // FADE:
+          if (!touch) {
+            slider.slides.eq(slider.currentSlide).css({"zIndex": 1}).animate({"opacity": 0}, slider.vars.animationSpeed, slider.vars.easing);
+            slider.slides.eq(target).css({"zIndex": 2}).animate({"opacity": 1}, slider.vars.animationSpeed, slider.vars.easing, slider.wrapup);
+          } else {
+            slider.slides.eq(slider.currentSlide).css({ "opacity": 0, "zIndex": 1 });
+            slider.slides.eq(target).css({ "opacity": 1, "zIndex": 2 });
+            slider.wrapup(dimension);
+          }
+        }
+        // SMOOTH HEIGHT:
+        if (slider.vars.smoothHeight) { methods.smoothHeight(slider.vars.animationSpeed); }
+      }
+    };
+    slider.wrapup = function(dimension) {
+      // SLIDE:
+      if (!fade && !carousel) {
+        if (slider.currentSlide === 0 && slider.animatingTo === slider.last && slider.vars.animationLoop) {
+          slider.setProps(dimension, "jumpEnd");
+        } else if (slider.currentSlide === slider.last && slider.animatingTo === 0 && slider.vars.animationLoop) {
+          slider.setProps(dimension, "jumpStart");
+        }
+      }
+      slider.animating = false;
+      slider.currentSlide = slider.animatingTo;
+      // API: after() animation Callback
+      slider.vars.after(slider);
+    };
+
+    // SLIDESHOW:
+    slider.animateSlides = function() {
+      if (!slider.animating && focused ) { slider.flexAnimate(slider.getTarget("next")); }
+    };
+    // SLIDESHOW:
+    slider.pause = function() {
+      clearInterval(slider.animatedSlides);
+      slider.animatedSlides = null;
+      slider.playing = false;
+      // PAUSEPLAY:
+      if (slider.vars.pausePlay) { methods.pausePlay.update("play"); }
+      // SYNC:
+      if (slider.syncExists) { methods.sync("pause"); }
+    };
+    // SLIDESHOW:
+    slider.play = function() {
+      if (slider.playing) { clearInterval(slider.animatedSlides); }
+      slider.animatedSlides = slider.animatedSlides || setInterval(slider.animateSlides, slider.vars.slideshowSpeed);
+      slider.started = slider.playing = true;
+      // PAUSEPLAY:
+      if (slider.vars.pausePlay) { methods.pausePlay.update("pause"); }
+      // SYNC:
+      if (slider.syncExists) { methods.sync("play"); }
+    };
+    // STOP:
+    slider.stop = function () {
+      slider.pause();
+      slider.stopped = true;
+    };
+    slider.canAdvance = function(target, fromNav) {
+      // ASNAV:
+      var last = (asNav) ? slider.pagingCount - 1 : slider.last;
+      return (fromNav) ? true :
+             (asNav && slider.currentItem === slider.count - 1 && target === 0 && slider.direction === "prev") ? true :
+             (asNav && slider.currentItem === 0 && target === slider.pagingCount - 1 && slider.direction !== "next") ? false :
+             (target === slider.currentSlide && !asNav) ? false :
+             (slider.vars.animationLoop) ? true :
+             (slider.atEnd && slider.currentSlide === 0 && target === last && slider.direction !== "next") ? false :
+             (slider.atEnd && slider.currentSlide === last && target === 0 && slider.direction === "next") ? false :
+             true;
+    };
+    slider.getTarget = function(dir) {
+      slider.direction = dir;
+      if (dir === "next") {
+        return (slider.currentSlide === slider.last) ? 0 : slider.currentSlide + 1;
+      } else {
+        return (slider.currentSlide === 0) ? slider.last : slider.currentSlide - 1;
+      }
+    };
+
+    // SLIDE:
+    slider.setProps = function(pos, special, dur) {
+      var target = (function() {
+        var posCheck = (pos) ? pos : ((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.animatingTo,
+            posCalc = (function() {
+              if (carousel) {
+                return (special === "setTouch") ? pos :
+                       (reverse && slider.animatingTo === slider.last) ? 0 :
+                       (reverse) ? slider.limit - (((slider.itemW + slider.vars.itemMargin) * slider.move) * slider.animatingTo) :
+                       (slider.animatingTo === slider.last) ? slider.limit : posCheck;
+              } else {
+                switch (special) {
+                  case "setTotal": return (reverse) ? ((slider.count - 1) - slider.currentSlide + slider.cloneOffset) * pos : (slider.currentSlide + slider.cloneOffset) * pos;
+                  case "setTouch": return (reverse) ? pos : pos;
+                  case "jumpEnd": return (reverse) ? pos : slider.count * pos;
+                  case "jumpStart": return (reverse) ? slider.count * pos : pos;
+                  default: return pos;
+                }
+              }
+            }());
+
+            return (posCalc * -1) + "px";
+          }());
+
+      if (slider.transitions) {
+        target = (vertical) ? "translate3d(0," + target + ",0)" : "translate3d(" + target + ",0,0)";
+        dur = (dur !== undefined) ? (dur/1000) + "s" : "0s";
+        slider.container.css("-" + slider.pfx + "-transition-duration", dur);
+         slider.container.css("transition-duration", dur);
+      }
+
+      slider.args[slider.prop] = target;
+      if (slider.transitions || dur === undefined) { slider.container.css(slider.args); }
+
+      slider.container.css('transform',target);
+    };
+
+    slider.setup = function(type) {
+      // SLIDE:
+      if (!fade) {
+        var sliderOffset, arr;
+
+        if (type === "init") {
+          slider.viewport = $('<div class="' + namespace + 'viewport"></div>').css({"overflow": "hidden", "position": "relative"}).appendTo(slider).append(slider.container);
+          // INFINITE LOOP:
+          slider.cloneCount = 0;
+          slider.cloneOffset = 0;
+          // REVERSE:
+          if (reverse) {
+            arr = $.makeArray(slider.slides).reverse();
+            slider.slides = $(arr);
+            slider.container.empty().append(slider.slides);
+          }
+        }
+        // INFINITE LOOP && !CAROUSEL:
+        if (slider.vars.animationLoop && !carousel) {
+          slider.cloneCount = 2;
+          slider.cloneOffset = 1;
+          // clear out old clones
+          if (type !== "init") { slider.container.find('.clone').remove(); }
+          slider.container.append(methods.uniqueID(slider.slides.first().clone().addClass('clone')).attr('aria-hidden', 'true'))
+                          .prepend(methods.uniqueID(slider.slides.last().clone().addClass('clone')).attr('aria-hidden', 'true'));
+        }
+        slider.newSlides = $(slider.vars.selector, slider);
+
+        sliderOffset = (reverse) ? slider.count - 1 - slider.currentSlide + slider.cloneOffset : slider.currentSlide + slider.cloneOffset;
+        // VERTICAL:
+        if (vertical && !carousel) {
+          slider.container.height((slider.count + slider.cloneCount) * 200 + "%").css("position", "absolute").width("100%");
+          setTimeout(function(){
+            slider.newSlides.css({"display": "block"});
+            slider.doMath();
+            slider.viewport.height(slider.h);
+            slider.setProps(sliderOffset * slider.h, "init");
+          }, (type === "init") ? 100 : 0);
+        } else {
+          slider.container.width((slider.count + slider.cloneCount) * 200 + "%");
+          slider.setProps(sliderOffset * slider.computedW, "init");
+          setTimeout(function(){
+            slider.doMath();
+            slider.newSlides.css({"width": slider.computedW, "marginRight" : slider.computedM, "float": "left", "display": "block"});
+            // SMOOTH HEIGHT:
+            if (slider.vars.smoothHeight) { methods.smoothHeight(); }
+          }, (type === "init") ? 100 : 0);
+        }
+      } else { // FADE:
+        slider.slides.css({"width": "100%", "float": "left", "marginRight": "-100%", "position": "relative"});
+        if (type === "init") {
+          if (!touch) {
+            //slider.slides.eq(slider.currentSlide).fadeIn(slider.vars.animationSpeed, slider.vars.easing);
+            if (slider.vars.fadeFirstSlide == false) {
+              slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).eq(slider.currentSlide).css({"zIndex": 2}).css({"opacity": 1});
+            } else {
+              slider.slides.css({ "opacity": 0, "display": "block", "zIndex": 1 }).eq(slider.currentSlide).css({"zIndex": 2}).animate({"opacity": 1},slider.vars.animationSpeed,slider.vars.easing);
+            }
+          } else {
+            slider.slides.css({ "opacity": 0, "display": "block", "webkitTransition": "opacity " + slider.vars.animationSpeed / 1000 + "s ease", "zIndex": 1 }).eq(slider.currentSlide).css({ "opacity": 1, "zIndex": 2});
+          }
+        }
+        // SMOOTH HEIGHT:
+        if (slider.vars.smoothHeight) { methods.smoothHeight(); }
+      }
+      // !CAROUSEL:
+      // CANDIDATE: active slide
+      if (!carousel) { slider.slides.removeClass(namespace + "active-slide").eq(slider.currentSlide).addClass(namespace + "active-slide"); }
+
+      //FlexSlider: init() Callback
+      slider.vars.init(slider);
+    };
+
+    slider.doMath = function() {
+      var slide = slider.slides.first(),
+          slideMargin = slider.vars.itemMargin,
+          minItems = slider.vars.minItems,
+          maxItems = slider.vars.maxItems;
+
+      slider.w = (slider.viewport===undefined) ? slider.width() : slider.viewport.width();
+      slider.h = slide.height();
+      slider.boxPadding = slide.outerWidth() - slide.width();
+
+      // CAROUSEL:
+      if (carousel) {
+        slider.itemT = slider.vars.itemWidth + slideMargin;
+        slider.itemM = slideMargin;
+        slider.minW = (minItems) ? minItems * slider.itemT : slider.w;
+        slider.maxW = (maxItems) ? (maxItems * slider.itemT) - slideMargin : slider.w;
+        slider.itemW = (slider.minW > slider.w) ? (slider.w - (slideMargin * (minItems - 1)))/minItems :
+                       (slider.maxW < slider.w) ? (slider.w - (slideMargin * (maxItems - 1)))/maxItems :
+                       (slider.vars.itemWidth > slider.w) ? slider.w : slider.vars.itemWidth;
+
+        slider.visible = Math.floor(slider.w/(slider.itemW));
+        slider.move = (slider.vars.move > 0 && slider.vars.move < slider.visible ) ? slider.vars.move : slider.visible;
+        slider.pagingCount = Math.ceil(((slider.count - slider.visible)/slider.move) + 1);
+        slider.last =  slider.pagingCount - 1;
+        slider.limit = (slider.pagingCount === 1) ? 0 :
+                       (slider.vars.itemWidth > slider.w) ? (slider.itemW * (slider.count - 1)) + (slideMargin * (slider.count - 1)) : ((slider.itemW + slideMargin) * slider.count) - slider.w - slideMargin;
+      } else {
+        slider.itemW = slider.w;
+        slider.itemM = slideMargin;
+        slider.pagingCount = slider.count;
+        slider.last = slider.count - 1;
+      }
+      slider.computedW = slider.itemW - slider.boxPadding;
+      slider.computedM = slider.itemM;
+    };
+
+    slider.update = function(pos, action) {
+      slider.doMath();
+
+      // update currentSlide and slider.animatingTo if necessary
+      if (!carousel) {
+        if (pos < slider.currentSlide) {
+          slider.currentSlide += 1;
+        } else if (pos <= slider.currentSlide && pos !== 0) {
+          slider.currentSlide -= 1;
+        }
+        slider.animatingTo = slider.currentSlide;
+      }
+
+      // update controlNav
+      if (slider.vars.controlNav && !slider.manualControls) {
+        if ((action === "add" && !carousel) || slider.pagingCount > slider.controlNav.length) {
+          methods.controlNav.update("add");
+        } else if ((action === "remove" && !carousel) || slider.pagingCount < slider.controlNav.length) {
+          if (carousel && slider.currentSlide > slider.last) {
+            slider.currentSlide -= 1;
+            slider.animatingTo -= 1;
+          }
+          methods.controlNav.update("remove", slider.last);
+        }
+      }
+      // update directionNav
+      if (slider.vars.directionNav) { methods.directionNav.update(); }
+
+    };
+
+    slider.addSlide = function(obj, pos) {
+      var $obj = $(obj);
+
+      slider.count += 1;
+      slider.last = slider.count - 1;
+
+      // append new slide
+      if (vertical && reverse) {
+        (pos !== undefined) ? slider.slides.eq(slider.count - pos).after($obj) : slider.container.prepend($obj);
+      } else {
+        (pos !== undefined) ? slider.slides.eq(pos).before($obj) : slider.container.append($obj);
+      }
+
+      // update currentSlide, animatingTo, controlNav, and directionNav
+      slider.update(pos, "add");
+
+      // update slider.slides
+      slider.slides = $(slider.vars.selector + ':not(.clone)', slider);
+      // re-setup the slider to accomdate new slide
+      slider.setup();
+
+      //FlexSlider: added() Callback
+      slider.vars.added(slider);
+    };
+    slider.removeSlide = function(obj) {
+      var pos = (isNaN(obj)) ? slider.slides.index($(obj)) : obj;
+
+      // update count
+      slider.count -= 1;
+      slider.last = slider.count - 1;
+
+      // remove slide
+      if (isNaN(obj)) {
+        $(obj, slider.slides).remove();
+      } else {
+        (vertical && reverse) ? slider.slides.eq(slider.last).remove() : slider.slides.eq(obj).remove();
+      }
+
+      // update currentSlide, animatingTo, controlNav, and directionNav
+      slider.doMath();
+      slider.update(pos, "remove");
+
+      // update slider.slides
+      slider.slides = $(slider.vars.selector + ':not(.clone)', slider);
+      // re-setup the slider to accomdate new slide
+      slider.setup();
+
+      // FlexSlider: removed() Callback
+      slider.vars.removed(slider);
+    };
+
+    //FlexSlider: Initialize
+    methods.init();
+  };
+
+  // Ensure the slider isn't focussed if the window loses focus.
+  $( window ).blur( function ( e ) {
+    focused = false;
+  }).focus( function ( e ) {
+    focused = true;
+  });
+
+  //FlexSlider: Default Settings
+  $.flexslider.defaults = {
+    namespace: "flex-",             //{NEW} String: Prefix string attached to the class of every element generated by the plugin
+    selector: ".slides > li",       //{NEW} Selector: Must match a simple pattern. '{container} > {slide}' -- Ignore pattern at your own peril
+    animation: "fade",              //String: Select your animation type, "fade" or "slide"
+    easing: "swing",                //{NEW} String: Determines the easing method used in jQuery transitions. jQuery easing plugin is supported!
+    direction: "horizontal",        //String: Select the sliding direction, "horizontal" or "vertical"
+    reverse: false,                 //{NEW} Boolean: Reverse the animation direction
+    animationLoop: true,            //Boolean: Should the animation loop? If false, directionNav will received "disable" classes at either end
+    smoothHeight: false,            //{NEW} Boolean: Allow height of the slider to animate smoothly in horizontal mode
+    startAt: 0,                     //Integer: The slide that the slider should start on. Array notation (0 = first slide)
+    slideshow: true,                //Boolean: Animate slider automatically
+    slideshowSpeed: 7000,           //Integer: Set the speed of the slideshow cycling, in milliseconds
+    animationSpeed: 600,            //Integer: Set the speed of animations, in milliseconds
+    initDelay: 0,                   //{NEW} Integer: Set an initialization delay, in milliseconds
+    randomize: false,               //Boolean: Randomize slide order
+    fadeFirstSlide: true,           //Boolean: Fade in the first slide when animation type is "fade"
+    thumbCaptions: false,           //Boolean: Whether or not to put captions on thumbnails when using the "thumbnails" controlNav.
+
+    // Usability features
+    pauseOnAction: true,            //Boolean: Pause the slideshow when interacting with control elements, highly recommended.
+    pauseOnHover: false,            //Boolean: Pause the slideshow when hovering over slider, then resume when no longer hovering
+    pauseInvisible: true,   		//{NEW} Boolean: Pause the slideshow when tab is invisible, resume when visible. Provides better UX, lower CPU usage.
+    useCSS: true,                   //{NEW} Boolean: Slider will use CSS3 transitions if available
+    touch: true,                    //{NEW} Boolean: Allow touch swipe navigation of the slider on touch-enabled devices
+    video: false,                   //{NEW} Boolean: If using video in the slider, will prevent CSS3 3D Transforms to avoid graphical glitches
+
+    // Primary Controls
+    controlNav: true,               //Boolean: Create navigation for paging control of each slide? Note: Leave true for manualControls usage
+    directionNav: true,             //Boolean: Create navigation for previous/next navigation? (true/false)
+    prevText: "Previous",           //String: Set the text for the "previous" directionNav item
+    nextText: "Next",               //String: Set the text for the "next" directionNav item
+
+    // Secondary Navigation
+    keyboard: true,                 //Boolean: Allow slider navigating via keyboard left/right keys
+    multipleKeyboard: false,        //{NEW} Boolean: Allow keyboard navigation to affect multiple sliders. Default behavior cuts out keyboard navigation with more than one slider present.
+    mousewheel: false,              //{UPDATED} Boolean: Requires jquery.mousewheel.js (https://github.com/brandonaaron/jquery-mousewheel) - Allows slider navigating via mousewheel
+    pausePlay: false,               //Boolean: Create pause/play dynamic element
+    pauseText: "Pause",             //String: Set the text for the "pause" pausePlay item
+    playText: "Play",               //String: Set the text for the "play" pausePlay item
+
+    // Special properties
+    controlsContainer: "",          //{UPDATED} jQuery Object/Selector: Declare which container the navigation elements should be appended too. Default container is the FlexSlider element. Example use would be $(".flexslider-container"). Property is ignored if given element is not found.
+    manualControls: "",             //{UPDATED} jQuery Object/Selector: Declare custom control navigation. Examples would be $(".flex-control-nav li") or "#tabs-nav li img", etc. The number of elements in your controlNav should match the number of slides/tabs.
+    customDirectionNav: "",         //{NEW} jQuery Object/Selector: Custom prev / next button. Must be two jQuery elements. In order to make the events work they have to have the classes "prev" and "next" (plus namespace)
+    sync: "",                       //{NEW} Selector: Mirror the actions performed on this slider with another slider. Use with care.
+    asNavFor: "",                   //{NEW} Selector: Internal property exposed for turning the slider into a thumbnail navigation for another slider
+
+    // Carousel Options
+    itemWidth: 0,                   //{NEW} Integer: Box-model width of individual carousel items, including horizontal borders and padding.
+    itemMargin: 0,                  //{NEW} Integer: Margin between carousel items.
+    minItems: 1,                    //{NEW} Integer: Minimum number of carousel items that should be visible. Items will resize fluidly when below this.
+    maxItems: 0,                    //{NEW} Integer: Maxmimum number of carousel items that should be visible. Items will resize fluidly when above this limit.
+    move: 0,                        //{NEW} Integer: Number of carousel items that should move on animation. If 0, slider will move all visible items.
+    allowOneSlide: true,           //{NEW} Boolean: Whether or not to allow a slider comprised of a single slide
+
+    // Callback API
+    start: function(){},            //Callback: function(slider) - Fires when the slider loads the first slide
+    before: function(){},           //Callback: function(slider) - Fires asynchronously with each slider animation
+    after: function(){},            //Callback: function(slider) - Fires after each slider animation completes
+    end: function(){},              //Callback: function(slider) - Fires when the slider reaches the last slide (asynchronous)
+    added: function(){},            //{NEW} Callback: function(slider) - Fires after a slide is added
+    removed: function(){},           //{NEW} Callback: function(slider) - Fires after a slide is removed
+    init: function() {}             //{NEW} Callback: function(slider) - Fires after the slider is initially setup
+  };
+
+  //FlexSlider: Plugin Function
+  $.fn.flexslider = function(options) {
+    if (options === undefined) { options = {}; }
+
+    if (typeof options === "object") {
+      return this.each(function() {
+        var $this = $(this),
+            selector = (options.selector) ? options.selector : ".slides > li",
+            $slides = $this.find(selector);
+
+      if ( ( $slides.length === 1 && options.allowOneSlide === false ) || $slides.length === 0 ) {
+          $slides.fadeIn(400);
+          if (options.start) { options.start($this); }
+        } else if ($this.data('flexslider') === undefined) {
+          new $.flexslider(this, options);
+        }
+      });
+    } else {
+      // Helper strings to quickly perform functions on the slider
+      var $slider = $(this).data('flexslider');
+      switch (options) {
+        case "play": $slider.play(); break;
+        case "pause": $slider.pause(); break;
+        case "stop": $slider.stop(); break;
+        case "next": $slider.flexAnimate($slider.getTarget("next"), true); break;
+        case "prev":
+        case "previous": $slider.flexAnimate($slider.getTarget("prev"), true); break;
+        default: if (typeof options === "number") { $slider.flexAnimate(options, true); }
+      }
+    }
+  };
+})(jQuery);
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(222).setImmediate))
+
+/***/ }),
+/* 221 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11), __webpack_require__(2)))
+
+/***/ }),
+/* 222 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(221);
+exports.setImmediate = setImmediate;
+exports.clearImmediate = clearImmediate;
+
+
+/***/ }),
+/* 223 */,
+/* 224 */,
+/* 225 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(32)();
+// imports
+
+
+// module
+exports.push([module.i, "\n.bid-btn[data-v-27fa9c97]{\n    color:white;\n    background-color: #fe980f;\n    margin:10px 0px;\n}\n.chat-btn[data-v-27fa9c97]{\n    color:white;\n    background-color: #fe980f;\n    margin:10px 0px;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 226 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(225);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(34)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-27fa9c97&scoped=true!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./BidForm.vue", function() {
+			var newContent = require("!!./../../../../../node_modules/css-loader/index.js!./../../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-27fa9c97&scoped=true!./../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./BidForm.vue");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 227 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(jQuery) {/***************************************************************************************************
+LoadingOverlay - A flexible loading overlay jQuery plugin
+    Author          : Gaspare Sganga
+    Version         : 1.5.3
+    License         : MIT
+    Documentation   : http://gasparesganga.com/labs/jquery-loading-overlay/
+****************************************************************************************************/
+(function($, undefined){
+    // Default Settings
+    var _defaults = {
+        color           : "rgba(255, 255, 255, 0.8)",
+        custom          : "",
+        fade            : true,
+        fontawesome     : "",
+        image           : "data:image/gif;base64,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",
+        imagePosition   : "center center",
+        maxSize         : "100px",
+        minSize         : "20px",
+        resizeInterval  : 50,
+        size            : "50%",
+        zIndex          : 9999
+    };
+    
+    $.LoadingOverlaySetup = function(settings){
+        $.extend(true, _defaults, settings);
+    };
+    
+    $.LoadingOverlay = function(action, options){
+        switch (action.toLowerCase()) {
+            case "show":
+                var settings = $.extend(true, {}, _defaults, options);
+                _Show("body", settings);
+                break;
+                
+            case "hide":
+                _Hide("body", options);
+                break;
+        }
+    };
+    
+    $.fn.LoadingOverlay = function(action, options){
+        switch (action.toLowerCase()) {
+            case "show":
+                var settings = $.extend(true, {}, _defaults, options);
+                return this.each(function(){
+                    _Show(this, settings);
+                });
+                
+            case "hide":
+                return this.each(function(){
+                    _Hide(this, options);
+                });
+        }
+    };
+    
+    
+    function _Show(container, settings){
+        container = $(container);
+        var wholePage   = container.is("body");
+        var count       = container.data("LoadingOverlayCount");
+        if (count === undefined) count = 0;
+        if (count == 0) {
+            var overlay = $("<div>", {
+                class   : "loadingoverlay",
+                css     : {
+                    "background-color"  : settings.color,
+                    "position"          : "relative",
+                    "display"           : "flex",
+                    "flex-direction"    : "column",
+                    "align-items"       : "center",
+                    "justify-content"   : "center"
+                }
+            });
+            if (settings.zIndex !== undefined) overlay.css("z-index", settings.zIndex);
+            if (settings.image) overlay.css({
+                "background-image"      : "url(" + settings.image + ")",
+                "background-position"   : settings.imagePosition,
+                "background-repeat"     : "no-repeat"
+            });
+            if (settings.fontawesome) $("<div>", {
+                class   : "loadingoverlay_fontawesome " + settings.fontawesome
+            }).appendTo(overlay);
+            if (settings.custom) $(settings.custom).appendTo(overlay);
+            if (wholePage) {
+                overlay.css({
+                    "position"  : "fixed",
+                    "top"       : 0,
+                    "left"      : 0,
+                    "width"     : "100%",
+                    "height"    : "100%"
+                });
+            } else {
+                overlay.css("position", (container.css("position") == "fixed") ? "fixed" : "absolute");
+            }
+            _Resize(container, overlay, settings, wholePage);
+            if (settings.resizeInterval > 0) {
+                var resizeIntervalId = setInterval(function(){
+                    _Resize(container, overlay, settings, wholePage);
+                }, settings.resizeInterval);
+                container.data("LoadingOverlayResizeIntervalId", resizeIntervalId);
+            }
+            if (!settings.fade) {
+                settings.fade = [0, 0];
+            } else if (settings.fade === true) {
+                settings.fade = [400, 200];
+            } else if (typeof settings.fade == "string" || typeof settings.fade == "number") {
+                settings.fade = [settings.fade, settings.fade];
+            }
+            container.data({
+                "LoadingOverlay"                : overlay,
+                "LoadingOverlayFadeOutDuration" : settings.fade[1]
+            });
+            overlay
+                .hide()
+                .appendTo("body")
+                .fadeIn(settings.fade[0]);
+        }
+        count++;
+        container.data("LoadingOverlayCount", count);
+    }
+
+    function _Hide(container, force){
+        container = $(container);
+        var count = container.data("LoadingOverlayCount");
+        if (count === undefined) return;
+        count--;
+        if (force || count <= 0) {
+            var resizeIntervalId = container.data("LoadingOverlayResizeIntervalId");
+            if (resizeIntervalId) clearInterval(resizeIntervalId);
+            container.data("LoadingOverlay").fadeOut(container.data("LoadingOverlayFadeOutDuration"), function(){
+                $(this).remove()
+            });
+            container.removeData(["LoadingOverlay", "LoadingOverlayCount", "LoadingOverlayFadeOutDuration", "LoadingOverlayResizeIntervalId"]);
+        } else {
+            container.data("LoadingOverlayCount", count);
+        }
+    }
+    
+    function _Resize(container, overlay, settings, wholePage){
+        if (!wholePage) {
+            var x = (container.css("position") == "fixed") ? container.position() : container.offset();
+            overlay.css({
+                top     : x.top + parseInt(container.css("border-top-width"), 10),
+                left    : x.left + parseInt(container.css("border-left-width"), 10),
+                width   : container.innerWidth(),
+                height  : container.innerHeight()
+            });
+        }
+        var c    = wholePage ? $(window) : container;
+        var size = "auto";
+        if (settings.size && settings.size != "auto") {
+            size = Math.min(c.innerWidth(), c.innerHeight()) * parseFloat(settings.size) / 100;
+            if (settings.maxSize && size > parseInt(settings.maxSize, 10)) size = parseInt(settings.maxSize, 10) + "px";
+            if (settings.minSize && size < parseInt(settings.minSize, 10)) size = parseInt(settings.minSize, 10) + "px";
+        }
+        overlay.css("background-size", size);
+        overlay.children(".loadingoverlay_fontawesome").css("font-size", size);
+    }
+    
+}(jQuery));
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ })
 /******/ ]);

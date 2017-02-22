@@ -25,6 +25,9 @@ function storagePath($path = null)
     return storage_path() . '/app';
 }
 
+function gravatar($email = 'xyz.com'){
+    return 'https://www.gravatar.com/avatar/' . md5($email) .'?s=50&d=mm';
+}
 function active($path, $active = 'active')
 {
     return Request::is($path) ? $active : '';

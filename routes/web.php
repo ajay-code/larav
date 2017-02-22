@@ -34,8 +34,7 @@ Route::get('/contact', 'HomeController@contact');
 Route::post('/contact', 'Admin\ContactController@store');
 
 
-/* Bid on the Product */
-Route::post('/products/{slug}/bid', 'HomeController@makeBid');
+
 
 
 

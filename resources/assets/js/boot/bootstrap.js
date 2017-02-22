@@ -8,6 +8,10 @@
 
 window.$ = window.jQuery = require('jquery');
 
+require('flexslider');
+
+require('gasparesganga-jquery-loading-overlay/src/loadingoverlay');
+
 
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces

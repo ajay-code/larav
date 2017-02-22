@@ -1,5 +1,11 @@
 <template>
-    <form @submit.prevent="onSubmit">
+    <div>
+    <div v-if="!bid" @click="bid = true">
+        <button class="btn btn-default bid-btn">
+            Make a Bid
+        </button>
+    </div>
+    <form v-if="bid && !completed" @submit.prevent="onSubmit">
         <h4> Make your Bid </h4>
         <div class="form-group">
             <input type="number" class="form-control" id="budget" name="budget"
@@ -25,9 +31,18 @@
             </span>
         </div>
         <div class="form-group">
-            <button class="btn btn-default" :disabled="form.errors.any()">Send Proposal</button>
+            <button class="btn btn-default bid-btn" :disabled="form.errors.any()">Send Proposal</button>
         </div>
     </form>
+
+        <div v-if="completed">
+            <a :href="chatUrl">
+                <button class="btn btn-default chat-btn">
+                    Start Chatting    
+                </button>
+            </a>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -38,7 +53,10 @@
                 form: new Form({
                     budget: '',
                     message: ''
-                })
+                }),
+                bid: false,
+                completed: false,
+                chatUrl: ''
             }
         },
         props: ['slug'],
@@ -46,11 +64,31 @@
         },
         methods: {
             onSubmit(){
+                $('body').LoadingOverlay('show')
                 this.form.post('/products/' + this.slug + '/bid').then(res => {
-                    console.log(res);
+                    $('body').LoadingOverlay('hide')
+                    this.completed = true;
+                    window.swal({
+                        title: "Success",
+                        text: "The bid was made successfully",
+                        type: "info",
+                    })
                     this.form.clear();
                 })
             }
         }
     }
 </script>
+
+<style scoped>
+    .bid-btn{
+        color:white;
+        background-color: #fe980f;
+        margin:10px 0px;
+    }
+    .chat-btn{
+        color:white;
+        background-color: #fe980f;
+        margin:10px 0px;
+    }
+</style>

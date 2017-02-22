@@ -1,16 +1,36 @@
 <?php $class = $thread->isUnread(Auth::id()) ? 'alert-info' : ''; ?>
 
-<div class="media alert {{ $class }}">
-    <h4 class="media-heading">
-        <a href="{{ route('messages.show', $thread->id) }}">{{ $thread->subject }}</a>
-        ({{ $thread->userUnreadMessagesCount(Auth::id()) }} unread)</h4>
-    <p>
-        {{ $thread->latestMessage->body }}
-    </p>
-    <p>
-        <small><strong>Creator:</strong> {{ $thread->creator()->name }}</small>
-    </p>
-    <p>
-        <small><strong>Participants:</strong> {{ $thread->participantsString(Auth::id()) }}</small>
-    </p>
+<div class="alert col-sm-12 {{ $class }}">
+    {{-- get Image For Display --}}
+        @foreach($thread->getParticipants() as $user)
+            @unless(Auth::user()->id == $user->user_id)
+                <div class="col-sm-4">
+                    @if($user->profile_picture)                
+                        <img src="{{ $user->profile_picture }}" class="thumb-round" alt="">
+                    @else
+                        <img src="{{ gravatar($user->email) }}" class="thumb-round" alt="">
+                    @endif
+                </div>
+                
+            @endunless
+        @endforeach
+
+    <div class="">
+    
+        <div class="col-sm-8">
+        <a href="{{ route('messages.show', $thread->id) }}">
+        
+            @foreach($thread->getParticipants() as $user)
+                @unless(Auth::user()->id == $user->user_id)
+                       <h4> {{ $user->name }}</h4>
+                @endunless
+            @endforeach
+        </a>
+            <p class="email-style" style="display:block">({{ $thread->userUnreadMessagesCount(Auth::id()) }} unread)</p>
+            <p class="email-style"> 
+                {{ $thread->latestMessage->body }}
+            </p>
+        </div>
+    </div>
 </div>
+<div class="clearfix"></div>

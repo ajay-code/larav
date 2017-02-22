@@ -1,34 +1,45 @@
 #footer {
-  background-color: #F1f1f1
+    background-color: #F1f1f1
 }
 
 .footer-top {
-  background-color: #F0F0E9
+    background-color: #F0F0E9
 }
 
-@media (max-width: 768px) and (min-width: 200px) {
-
-}
+@media (max-width: 768px) and (min-width: 200px) {}
 
 h1#margin.margin-20 {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .single-widget {
-  a {
-    text-decoration: none;
-    color: inherit;
-    &:hover {
-      color: #FE980F;
+    a {
+        text-decoration: none;
+        color: inherit;
+        &:hover {
+            color: #FE980F;
+        }
     }
-  }
+    h5 {
+        color: rgba(0, 0, 0, .60);
+    }
+    span {
+        font-size: 14px;
+        color: rgba(0, 0, 0, .50);
+    }
+}
 
-  h5 {
-    color: rgba(0, 0, 0, .60);
-  }
-
-  span {
-    font-size: 14px;
-    color: rgba(0, 0, 0, .50);
-  }
+#loading {
+    display: block;
+    position: fixed;
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    vertical-align: middle;
+    text-align: center;
+    vertical-align: middle;
+    text-align: center;
 }

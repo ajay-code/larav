@@ -1,5 +1,5 @@
 <template>
-    <div class="media">
+    <div class="media col-sm-6">
             <a class="pull-left" href="#">
                 <img :src="imageUrl"
                     :alt="message.user.name" class="img-circle">

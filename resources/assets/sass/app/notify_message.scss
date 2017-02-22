@@ -17,6 +17,7 @@
 #notify .pro-title{
 	margin-top: 5px;
 	text-align: center;
+	font-size:15px;
 	color:#696763;
 }
 .pro-title a:hover{
@@ -52,8 +53,6 @@
 }
 .users-container{
 	border:1px solid #F0F0E9;
-	
-
 }
 .message-indi-con{
 	height:587px;
@@ -74,6 +73,8 @@
 	font-size: 25px;
 }
 .user-message{
+	width:100%;
+	height:100%;
 	padding:15px;
 	border-bottom:1px solid #F0F0E9;
 }
@@ -93,7 +94,6 @@
 }
 .message-body{
 	height:475px;
-	width:103%;
 	border:1px solid #F0F0E9;
 	overflow-y:scroll;
 }
@@ -102,4 +102,16 @@
 	width:103%;
 	margin-bottom: 0px;
 	border:1px solid #333;
+}
+
+.scroll{
+	min-height: 100px;
+	max-height: 400px;
+	overflow-y: scroll; 
+}
+
+.thumbnail-round{
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
 }

@@ -6,7 +6,7 @@
                 <h3 class="add-wish-head">Add your wish...</h3>
             </div>
             <form id="wish-form" class="Wish-form" role="form" method="POST" enctype="multipart/form-data"
-                  action="{{ url('/editWish') }}">
+                  action="{{ url('/wish/'. $product->id . '/edit') }}">
                 {{ csrf_field() }}
                 <div class="row">
                     <div class="col-md-4 wish-images">

@@ -54,26 +54,7 @@ class HomeController extends Controller
         return view('contact');
     }
 
-    /*Make Bid On the Product*/
-    public function makeBid(Request $request, $slug)
-    {
-        $this->validate($request, [
-            'budget' => 'required|numeric|min:0',
-            'message' => 'required'
-        ]);
-
-        $product = Product::where('slug', $slug)->first();
-        $bid = new Bid($request->all());
-        $bid->product_id = $product->id;
-        $from = auth()->user();
-        $bid->seller()->associate($from);
-        $bid->save();
-
-        $product->user->notify(new NewBid($product->user, $bid, $from));
-
-        return $bid;
-
-    }
+    
 
     /*Testing Purpose*/
     public function test()

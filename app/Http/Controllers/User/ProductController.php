@@ -24,7 +24,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = auth()->user()->products()->with('photos', 'tagged.tag', 'subcategory')->orderBy('created_at', 'desc')->get();
+        $products = auth()->user()->products()->where('order_completed', false)->with('photos', 'tagged.tag', 'subcategory')->orderBy('created_at', 'desc')->get();
 
 
         return view('user.wishlist', compact('products'));
@@ -101,9 +101,14 @@ class ProductController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Product $product)
     {
-        //
+        $product->update($request->all());
+        $subcategory = $request->input('subcategory');
+        $product->subcategory()->associate($subcategory);
+        $product->save();
+        alert()->success('wish successfully updated');
+        return redirect('/');
     }
 
     /**
@@ -134,6 +139,13 @@ class ProductController extends Controller
                 }
             }
         }
+    }
+
+
+    public function test(Product $product)
+    {
+        
+            return $product->bids[0]->seller->id;
     }
 
 
