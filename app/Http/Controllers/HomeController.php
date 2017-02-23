@@ -26,7 +26,9 @@ class HomeController extends Controller
 
         $categories = Category::with('products4')->has('products4')->take(5)->get();
 
-        return view('index', compact('products', 'categories'));
+        $random = Product::inRandomOrder()->limit(24)->get();
+
+        return view('index', compact('products', 'categories', 'random'));
     }
 
     /**

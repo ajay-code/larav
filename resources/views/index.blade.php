@@ -87,10 +87,11 @@
                                                     <p>
                                                         <span class="buyagoo-color">Budget</span>  
                                                         <span class="budget"> ${{ $product->budget }}</span>
-                                                        <span class="by-user pull-right"> 
-                                                            <i class="fa fa-user-circle"></i> {{ $product->user->name }}
-                                                        </span>            
+                                                                    
                                                     </p>
+                                                    <p><span class="by-user "> 
+                                                            <i class="fa fa-user-circle"></i> {{ $product->user->name }}
+                                                        </span> </p>
                                                     <p class="see-more"> <a href="{{ url('/category/'.$product->subcategory->category->slug) }}">See more in this category 
                                                         <i class="fa fa-chevron-right right-arrow"></i> 
                                                     </a></p>
@@ -112,100 +113,43 @@
 
                         <div id="recommended-item-carousel" class="carousel slide hidden-xs" data-ride="carousel">
                             <div class="carousel-inner">
-                                <div class="item active">
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="{{getStorageUrl('images/home/recommend1.jpg')}}"
-                                                         alt=""/>
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i
-                                                                class="fa fa-shopping-cart"></i>View more</a>
-                                                </div>
+                                @foreach($random->chunk(3) as $products)
+                                    <div class="item {{ $loop->first ? 'active' : '' }}">
+                                    @foreach($products as $product)
+                                                <div class="col-sm-4 col-sm-offset-0  col-xs-8 col-xs-offset-2">
+                                        
+                                                <div class="product-image-wrapper">
+                                                    <div class="single-products">
+                                                        <div class="productinfo">
+                                                            <a href="{{ url('/products/'.$product->slug) }}">
+                                                                <img src="{{$product->getPrimaryPhoto()->thumbnailUrl()}}" alt=""/>
+                                                            </a>
+                                                            <p>
+                                                            <a class="product-title" href="{{ url('/products/'.$product->slug) }}">
+                                                                {{ Str::words($product->title) }}
+                                                            </a>   
+                                                            </p>
+                                                            <p>
+                                                                <span class="buyagoo-color">Budget</span>  
+                                                                <span class="budget"> ${{ $product->budget }}</span>
+                                                                
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="{{getStorageUrl('images/home/recommend2.jpg')}}"
-                                                         alt=""/>
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i
-                                                                class="fa fa-shopping-cart"></i>View more</a>
-                                                </div>
+                                                            </p>
+                                                            <p><span class="by-user "> 
+                                                                    <i class="fa fa-user-circle"></i> {{ $product->user->name }}
+                                                                </span> </p>
+                                                            <p class="see-more"> <a href="{{ url('/category/'.$product->subcategory->category->slug) }}">See more in this category 
+                                                                <i class="fa fa-chevron-right right-arrow"></i> 
+                                                            </a></p>
+                                                        </div>
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="{{getStorageUrl('images/home/recommend3.jpg')}}"
-                                                         alt=""/>
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i
-                                                                class="fa fa-shopping-cart"></i>View more</a>
+                                                    </div>
                                                 </div>
-
-                                            </div>
                                         </div>
+                                    @endforeach
                                     </div>
-                                </div>
-                                <div class="item">
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="{{getStorageUrl('images/home/recommend1.jpg')}}"
-                                                         alt=""/>
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i
-                                                                class="fa fa-shopping-cart"></i>View more</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="{{getStorageUrl('images/home/recommend2.jpg')}}"
-                                                         alt=""/>
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i
-                                                                class="fa fa-shopping-cart"></i>View more</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="{{getStorageUrl('images/home/recommend3.jpg')}}"
-                                                         alt=""/>
-                                                    <h2>$56</h2>
-                                                    <p>Easy Polo Black Edition</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i
-                                                                class="fa fa-shopping-cart"></i>View more</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
+                                    
                             </div>
                             <a class="left recommended-item-control" href="#recommended-item-carousel"
                                data-slide="prev">

@@ -31,10 +31,10 @@
                                                     <p>
                                                         <span class="buyagoo-color">Budget</span>  
                                                         <span class="budget"> ${{ $product->budget }}</span>
-                                                        <span class="by-user pull-right"> 
-                                                            <i class="fa fa-user-circle"></i> {{ $product->user->name }}
-                                                        </span>            
                                                     </p>
+                                                    <p><span class="by-user "> 
+                                                            <i class="fa fa-user-circle"></i> {{ $product->user->name }}
+                                                        </span> </p>
                                                     <p class="see-more"> <a href="{{ url('/category/'.$product->subcategory->category->slug) }}">See more in this category 
                                                         <i class="fa fa-chevron-right right-arrow"></i> 
                                                     </a></p>
