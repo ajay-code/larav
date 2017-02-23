@@ -63,7 +63,7 @@ class MessagesController extends Controller
      */
     public function showAjax($id)
     {
-        $threads = Thread::getAllLatest()->get();
+        $threads = Thread::forUser(Auth::user()->id)->latest('updated_at')->get();
         try {
             $thread = Thread::findOrFail($id);
         } catch (ModelNotFoundException $e) {
