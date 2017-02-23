@@ -8,7 +8,7 @@
 
             <div class="media-body {{ (auth()->user()->id == $message->user->id) ? 'message-left' : 'message-right'  }}" >
                 <div class="{{ (auth()->user()->id == $message->user->id)? 'pull-left' : 'pull-right'  }}">
-                    <p > {{ $message->body }}</p>
+                    <p > {!! $message->body !!}</p>
                     <div class="text-muted">
                         <small>Posted {{ $message->created_at->diffForHumans() }} </small>
                     </div>

@@ -106,7 +106,8 @@ class UserController extends Controller
             [
                 'thread_id' => $thread->id,
                 'user_id'   => Auth::user()->id,
-                'body'      => Auth::user()->name.' made bid of $'.$request->input('budget'). ' on your wish '. $product->title,
+                'body'      => Auth::user()->name.' made bid of $'.$request->input('budget'). ' on the wish '. 
+                                '<a href="/products/'. $product->slug.'">' . $product->title. '</a>',
             ]
         );
         
