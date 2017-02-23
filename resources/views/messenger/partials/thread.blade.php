@@ -27,7 +27,7 @@
         </a>
             <p class="email-style" style="display:block">({{ $thread->userUnreadMessagesCount(Auth::id()) }} unread)</p>
             <p class="email-style"> 
-                {{ $thread->latestMessage->body }}
+                {!! $thread->latestMessage->body !!}
             </p>
         </div>
     </div>
