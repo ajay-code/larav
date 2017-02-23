@@ -5,9 +5,7 @@
             <div class="row">
                 <h3 class="add-wish-head">Add your wish...</h3>
             </div>
-            <form id="wish-form" class="Wish-form" role="form" method="POST" enctype="multipart/form-data"
-                  action="{{ url('/wish/'. $product->id . '/edit') }}">
-                {{ csrf_field() }}
+            
                 <div class="row">
                     <div class="col-md-4 wish-images">
                         <div class="row">
@@ -36,7 +34,9 @@
                         </div>
                     </div>
 
-                    <br>
+                    <form id="wish-form" class="Wish-form" role="form" method="POST" enctype="multipart/form-data"
+                  action="{{ url('/wish/'. $product->id . '/edit') }}">
+                {{ csrf_field() }}
                     {{-- RightHand Side Of Form --}}
                     <div class="col-md-7 col-md-offset-1 wish-data">
 
