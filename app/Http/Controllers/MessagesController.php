@@ -89,7 +89,7 @@ class MessagesController extends Controller
             $thread = Thread::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             Session::flash('error_message', 'The thread with ID: ' . $id . ' was not found.');
-            return redirect('messages');
+            return '<h2><center>No chat Available Here</center></h2>';
         }
 
         $participant= Participant::where('thread_id',$thread->id)->where('user_id',Auth::user()->id)->first();
