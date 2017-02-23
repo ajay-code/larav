@@ -94,7 +94,7 @@ class MessagesController extends Controller
 
         $participant= Participant::where('thread_id',$thread->id)->where('user_id',Auth::user()->id)->first();
         if(!$participant){
-            return response(403);
+            return 'No chat Available Here';
         }
         // show current user in list if not a current participant
         // $users = User::whereNotIn('id', $thread->participantsUserIds())->get();
