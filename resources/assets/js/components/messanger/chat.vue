@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <div >
+        
         <div id="chat" class="row message-body">
             
         </div>
@@ -45,3 +46,9 @@ import eventHub from "../../event";
         }
     }
 </script>
+
+<style scoped>
+    .row{
+        margin: 0;
+    }
+</style>

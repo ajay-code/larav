@@ -14,7 +14,7 @@
 
 		<div class="col-sm-8 messages-container">
 			<div class="row message-title">MESSAGES</div>
-			
+					
 	    		<chat post-url="{{ route('messages.update', $thread->id) }}" :thread="{{ $thread }}" :users="{{ $users }}" :current-user="{{ auth()->user() }}" :messages="{{ $thread->messages }}"></chat>
 		</div>
 	</div>
