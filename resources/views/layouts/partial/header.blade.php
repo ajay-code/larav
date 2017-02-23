@@ -39,10 +39,12 @@
                                 <li><a href="{{ url('/addwish') }}"><i class="fa fa-plus"></i> Add wish</a></li>
                                 <li><a href="{{ url('/wishlist') }}"><i class="fa fa-star"></i> Wishlist</a></li>
                                 <li>
-                                    <a href="{{ url('/messages') }}" > <i class="fa fa-envelope  "></i>
+                                    <a href="{{ url('/messages') }}" > <i class="fa fa-envelope "> </i> 
+
                                     @if(Auth::check())
                                         @include('messenger.unread-count')
                                     @endif
+                                    <span class="hidden-sm">Inbox</span>
                                     </a>
                                 </li>
                                 <li>
@@ -54,6 +56,7 @@
                                                 </span>
                                             @endif
                                         </i> 
+                                        <span class="hidden-sm">Notifications</span>
                                     </a>
                                 </li>
                                 <li class="dropdown">

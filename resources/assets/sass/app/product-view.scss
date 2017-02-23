@@ -1,0 +1,34 @@
+.product-image-wrapper {
+	padding: 6px;
+}
+
+.productinfo {
+	.buyagoo-color{
+		color: #FE980F;
+	}
+	.right-arrow{
+		font-weight: 300;
+		font-size: 8px;
+	}
+	p {
+		font-size: 12px;
+		font-weight: 300;
+	}
+	&:hover{
+		.product-title{
+		color: blue;
+	}	
+	}
+	.product-title{
+		color: black;
+	}
+	.budget{
+		color:#FE980F;
+		font-weight: 500;
+		font-size: 16px;
+	}
+
+	.by-user{
+		color:#FE980F;
+	}
+}
