@@ -94,7 +94,7 @@ class MessagesController extends Controller
 
         $participant= Participant::where('thread_id',$thread->id)->where('user_id',Auth::user()->id)->first();
         if(!$participant){
-            return redirect('/');
+            return response(403);
         }
         // show current user in list if not a current participant
         // $users = User::whereNotIn('id', $thread->participantsUserIds())->get();
