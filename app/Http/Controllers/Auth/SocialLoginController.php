@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Category;
 use Auth;
 use App\User;
 use Socialite;

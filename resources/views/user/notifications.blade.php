@@ -16,7 +16,7 @@
                                         <a href="#">
                                             <img class="media-object" src="{{$bid->product->getPrimaryPhoto()->thumbnailUrl()}}" alt="...">
                                         </a>
-                                        <p class="pro-title"><a href="#">{{$bid->product->title}}</a></p>
+                                        <p class="pro-title"><a href="{{ url('/') }}">{{$bid->product->title}}</a></p>
                                     </div>
                                     <div class="media-body">
                                         <h4 class="media-heading"><span>From: </span>{{$bid->seller->name}}</h4>

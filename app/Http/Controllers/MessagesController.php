@@ -165,8 +165,14 @@ class MessagesController extends Controller
             $thread = Thread::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             alert()->info('error_message', 'The thread with ID: ' . $id . ' was not found.');
-            return redirect('messages');
+        return '<h2><center>No chat Available Here</center></h2>';
         }
+
+        $participant= Participant::where('thread_id',$thread->id)->where('user_id',Auth::user()->id)->first();
+        if(!$participant){
+            return '<h2><center>No chat Available Here</center></h2>';
+        }
+        
         $thread->activateAllParticipants();
         // Message
         Message::create(
