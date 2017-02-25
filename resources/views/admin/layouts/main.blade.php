@@ -9,6 +9,7 @@
     <!-- styles -->
     <link href="{{assetUrl('/admin/css/styles.css')}}" rel="stylesheet">
     <link href="{{assetUrl('/admin/css/admin.css')}}" rel="stylesheet">
+    <link href="{{assetUrl('/css/font-awesome.min.css')}}" rel="stylesheet">
 
     <script>
         window.Laravel = <?php echo json_encode([

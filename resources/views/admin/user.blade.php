@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="row" id="user">
-        <div class="col-md-6">
+        <div class="col-md-7">
             <div class="content-box-large">
                 <div class="panel-heading">
-                    <div class="panel-title">Latest Contacts</div>
+                    <div class="panel-title">All Users</div>
                 </div>
                 <div class="panel-body">
                     <table class="table">
@@ -14,6 +14,7 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>view</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -23,6 +24,9 @@
                                 <td>#{{ $user->id }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
+                                <td>
+                                    <a href="{{ url('admin/products/user/'.$user->id) }}">{{ 'products' }}</a>
+                                </td>
                                 <td>
                                     <a href="#"
                                        @click.stop.prevent="getDetail({{ $user->id }})"
@@ -37,7 +41,7 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="row" v-if="user">
                 <div class="col-md-12">
 
