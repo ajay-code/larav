@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use Auth;
 use App\User;
 use App\Models\Photo;
 use App\Models\Product;
@@ -89,6 +90,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $this->authorize('update', $product);
+
         $product->load('user', 'photos');
         // return $product->subcategory;
         return view('user.editwish', compact('product'));
@@ -144,7 +147,7 @@ class ProductController extends Controller
 
     public function test(Product $product)
     {
-        
+
             return $product->bids[0]->seller->id;
     }
 

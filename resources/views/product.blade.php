@@ -39,16 +39,16 @@
                                                     </li>
                                                 @endforeach
                                         @endif
-                                      
+
                                         <!-- items mirrored twice, total of 12 -->
                                       </ul>
                                     </div>
-                            
+
 
                         </div>
                         <div class="col-sm-7">
                             <div class="product-information"><!--/product-information-->
-                                
+
                                 <div class="wish-tags" style="margin-bottom: 20px;">
                                     @if (!$product->tagged->isEmpty())
                                         @foreach($product->tags as $tag)
@@ -57,13 +57,20 @@
                                             </a>
                                         @endforeach
                                     @endif
-                                    @if(Auth::check())
-                                        @if(Auth::user()->id !== $product->user->id)
+
+                                    @can('copy', $product)
                                         <span class="pull-right add-to-my-wish margin-0">
                                             <add-to-wishlist product-id="{{ $product->id }}"></add-to-wishlist>
                                         </span>
-                                        @endif
-                                    @endif
+                                    @endcan
+
+                                    @can('update', $product)
+                                        <span class="pull-right add-to-my-wish margin-0">
+                                            <a href="{{ url('/wish/'.$product->id.'/edit') }}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </span>
+                                    @endcan
                                 </div>
                                 <h2>{{ $product->title }}</h2>
 
@@ -78,13 +85,11 @@
 								</span>
                                 <p>By: {{ $product->user->name }}</p>
 
-                                @if(Auth::check())
-                                    @if(Auth::user()->id !== $product->user->id)
+                                @can('bid', $product)
                                         @if(! $product->madeBid(Auth::user()))
                                             <bid-form slug="{{ $product->slug }}" ></bid-form>
                                         @endif
-                                    @endif
-                                @endif
+                                @endcan
 
                             </div><!--/product-information-->
                         </div>
