@@ -12,13 +12,14 @@ require('flexslider');
 
 require('gasparesganga-jquery-loading-overlay/src/loadingoverlay');
 
+var Dropzone = require('dropzone');
 
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean
  * and simple, leaving you to focus on building your next great project.
  */
- 
+
 window.Vue = require('vue');
 
 /**
@@ -49,9 +50,9 @@ window.axios.defaults.headers.common = {
 // });
 
 // Project libraries
-require('sweetalert');  
+require('sweetalert');
 autosize = require('autosize');
-require('selectize'); 
+require('selectize');
 bootstrap = require('bootstrap-sass');
 require('../vendor/jquery.scrollup');
 require('../vendor/jquery.uploadPreview');

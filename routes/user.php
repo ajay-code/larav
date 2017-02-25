@@ -8,6 +8,10 @@ Route::post('/addWish', 'User\ProductController@store');
 Route::get('wish/{product}/edit', 'User\ProductController@edit');
 Route::post('wish/{product}/edit', 'User\ProductController@update');
 
+/*Edit Product Photos*/
+Route::post('wish/{product}/photos/', 'User\ProductController@addNewPhoto');
+Route::delete('wish/photos/{photo}', 'User\ProductController@deletePhoto');
+
 
 /*Wish completed*/
 Route::post('wish/{product}/completed', 'User\UserController@wishCompleted');

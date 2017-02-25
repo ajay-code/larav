@@ -1,4 +1,3 @@
-
 @import "app/addproduct";
 @import "app/wishlist";
 @import "app/uploadImage";
@@ -7,38 +6,41 @@
 @import "app/header";
 @import "app/footer";
 @import "app/nav";
-@import "app/404"; 
+@import "app/404";
 @import "app/notify_message";
 @import "app/products";
 @import "app/product-view";
+@import "app/editwish";
 
-.login-form form button, .signup-form form button {
+.login-form form button,
+.signup-form form button {
     display: inline-block;
 }
 
-span > label{
+span > label {
     font-weight: normal;
 }
 
-.margin-20{
-    margin-top: 20px;
+.margin-20 {
+    margin-top   : 20px;
     margin-bottom: 20px;
 }
 
-textarea, select{
-  background: white;
+select,
+textarea {
+    background: white;
 }
 
-textarea{
-  min-height: 200px;
-  max-height: 400px;
+textarea {
+    min-height: 200px;
+    max-height: 400px;
 }
 
-.btn-orange{
-  background-color: #FE980F;
-  color: white;
+.btn-orange {
+    background-color: #FE980F;
+    color           : white;
 }
 
-#app{
-  min-height: 400px;
+#app {
+    min-height: 400px;
 }

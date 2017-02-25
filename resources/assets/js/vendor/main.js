@@ -55,14 +55,18 @@ $(window).on('load',function() {
     itemMargin: 5,
     asNavFor: '#slider'
   });
- 
+
   $('#slider').flexslider({
     animation: "slide",
     controlNav: false,
     animationLoop: false,
     slideshow: false,
     sync: "#carousel",
-    prevText: "",    
-    nextText: "", 
+    prevText: "",
+    nextText: "",
   });
-}); 
+});
+
+
+
+// Dropezone

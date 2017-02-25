@@ -144,6 +144,22 @@ class ProductController extends Controller
         }
     }
 
+    public function addNewPhoto(Request $request,Product $product){
+        $product->photos();
+        $photo = Photo::fromFile($request->file('file'))->upload();
+        $product->attachPhoto($photo);
+        return $photo;
+    }
+
+    public function deletePhoto(Photo $photo){
+        $this->authorize('delete', $photo->product);
+        if($photo->is_primary){
+            abort(403, 'You Can Not Delete The Primary Image, Please Change The Primary Image First ');
+        }
+        $photo->delete();
+        return back();
+    }
+
 
     public function test(Product $product)
     {

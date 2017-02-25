@@ -18,6 +18,7 @@
   "dependencies": {
     "autosize": "^3.0.20",
     "bootstrap-social": "^5.1.1",
+    "dropzone": "^4.3.0",
     "es6-promise": "^4.0.5",
     "flexslider": "^2.6.3",
     "gasparesganga-jquery-loading-overlay": "^1.5.3",
