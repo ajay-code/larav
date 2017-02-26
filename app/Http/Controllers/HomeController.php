@@ -56,7 +56,7 @@ class HomeController extends Controller
         return view('contact');
     }
 
-    
+
 
     /*Testing Purpose*/
     public function test()
@@ -91,9 +91,9 @@ class HomeController extends Controller
         $productCopy->user()->associate(auth()->user()->id);
 
         // Save The Product
-        
+
         $productCopy->save();
-        
+
 
         return 1;
 

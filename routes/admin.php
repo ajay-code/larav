@@ -12,6 +12,7 @@ Route::get('/create', 'Admin\AdminController@create');
 /*Routes For showing Products To admin*/
 Route::get('/products', 'Admin\ProductController@index');
 Route::get('/products/user/{user}', 'Admin\ProductController@showUsersProducts');
+Route::get('/search', 'Admin\ProductController@search');
 
 /*Routes For Contact Info*/
 Route::get('/contacts', 'Admin\ContactController@index');
@@ -20,5 +21,3 @@ Route::get('/contacts/{contact}', 'Admin\ContactController@show');
 
 /*Routes For Contact Info*/
 Route::get('/users', 'Admin\UserController@index');
-
-

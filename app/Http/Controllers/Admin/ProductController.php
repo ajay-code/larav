@@ -21,6 +21,19 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a listing of the product according to query.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $products = Product::search($request->input('q'))->paginate(12);
+        $products->load('photos', 'user');
+
+        return view('admin.products', compact('products'));
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
