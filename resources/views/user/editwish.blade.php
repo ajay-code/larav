@@ -21,7 +21,7 @@
                                 @foreach ($product->photos()->get() as $photo)
 
                                     <div class="col-xs-6 gallery_image">
-                                      <label>{{ $photo->id }}</label>
+                                      <label>{{ $loop->iteration }}</label>
                                         <div class="img-wrap">
                                           <form method="post" id="upload-photo" action="{{ url('wish/photos/'.$photo->id) }}">
                                               {{ csrf_field() }}
@@ -49,7 +49,7 @@
                                     @foreach ($product->photos()->get() as $photo)
                                         <label for="{{ $photo->id }}">
                                             <input id="{{ $photo->id }}" type="radio" name='id' value="{{ $photo->id }}" {{ $photo->is_primary ? 'checked' : '' }} >
-                                            {{ $photo->id }}
+                                            {{ $loop->iteration }}
                                         </label> 
                                     @endforeach
                                     <br>
