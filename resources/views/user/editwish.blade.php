@@ -16,7 +16,7 @@
                               </div>
                             </form>
                         </div>
-                        .<div class="row">
+                        <div class="row">
                             <div class="col-md-12 gallery">
                                 @foreach ($product->photos()->get() as $photo)
 
@@ -37,7 +37,29 @@
                                 @endforeach
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-12 gallery">
+                            <br>
+                            <br>
+                            <br>
+                            <h4>Set primary Image</h4>
+                                <form action="{{ url('wish/primary/'.$product->id) }}" method="post">
+                                    {{ csrf_field() }}
+                                    @foreach ($product->photos()->get() as $photo)
+                                        <label for="{{ $photo->id }}">
+                                            <input id="{{ $photo->id }}" type="radio" name='id' value="{{ $photo->id }}" {{ $photo->is_primary ? 'checked' : '' }} >
+                                            {{ $photo->id }}
+                                        </label> 
+                                    @endforeach
+                                    <br>
+                                    <input type="submit" class="btn btn-primary" value="Submit">
+                                </form>
+                            </div>
+                        </div>
                     </div>
+
+
 
 
 

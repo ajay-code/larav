@@ -11,6 +11,8 @@ Route::post('wish/{product}/edit', 'User\ProductController@update');
 /*Edit Product Photos*/
 Route::post('wish/{product}/photos/', 'User\ProductController@addNewPhoto');
 Route::delete('wish/photos/{photo}', 'User\ProductController@deletePhoto');
+/*Set Primary Photo*/
+Route::post('wish/primary/{product}', 'User\ProductController@setPrimaryImage');
 
 
 /*Wish completed*/

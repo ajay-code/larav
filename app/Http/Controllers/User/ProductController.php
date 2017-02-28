@@ -160,6 +160,19 @@ class ProductController extends Controller
         return back();
     }
 
+    public function setPrimaryImage(Request $request,Product $product){
+        $product->photos->each(function($photo){
+           $photo->is_primary = false;
+           $photo->save();
+        });
+
+        $photo = Photo::find($request->input('id'));
+        $photo->is_primary = true;
+        $photo->save();
+
+        return back();
+    }
+
 
     public function test(Product $product)
     {
