@@ -10,6 +10,7 @@
     <link href="{{assetUrl('/admin/css/styles.css')}}" rel="stylesheet">
     <link href="{{assetUrl('/admin/css/admin.css')}}" rel="stylesheet">
     <link href="{{assetUrl('/css/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{assetUrl('admin/css/new.css')}}" rel="stylesheet">
 
     <script>
         window.Laravel = <?php echo json_encode([
@@ -48,6 +49,7 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="{{assetUrl('/js/jquery.js')}}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" async></script>
 <script src="{{assetUrl('/admin/bootstrap/js/bootstrap.min.js')}}"></script>
 <script src="{{assetUrl('/admin/js/custom.js')}}"></script>
 <script src="{{assetUrl('/js/admin.js')}}"></script>

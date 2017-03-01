@@ -4,8 +4,10 @@
 <section id="notify">
     <div class="container">
         <div class="row real-con ">
+            <a href="{{ url('notifications') }}"><button class="btn btn-default  {{ active('notifications') }}">All Notifications</button></a>
+            <a href="{{ url('notifications/unread') }}"><button class="btn btn-default {{ active('notifications/unread') }}">Unread Notifications</button></a>
             <div class="col-sm-12 notifications">
-                    <h3 class="notifications__header">All Notifications...</h3>
+                    <h3 class="notifications__header">{{ $type == 'unread' ? 'Unread Notifications': 'All Notifications'}}</h3>
 
                     @foreach($notifications as $notification)
                         @if( $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product'))

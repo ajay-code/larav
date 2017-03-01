@@ -1,5 +1,7 @@
 <?php
 
+/*User Profile*/
+Route::get('/profile', 'User\UserController@profile');
 /*Adding Product To The DataBase*/
 Route::get('/addwish', 'User\ProductController@create');
 Route::post('/addWish', 'User\ProductController@store');
@@ -26,7 +28,7 @@ Route::post('/products/{slug}/bid', 'User\UserController@makeBid');
 
 /*Notification Url*/
 Route::get('/notifications', 'User\UserController@showNotifications');
-Route::get('/notifications/{notification}', 'User\UserController@showSingleNotification');
+Route::get('/notifications/unread', 'User\UserController@showUnreadNotifications');
 
 
 

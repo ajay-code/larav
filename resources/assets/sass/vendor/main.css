@@ -1211,21 +1211,7 @@ h2.title {
     margin-bottom: 5px;
 }
 
-.product-information span {
-    display: inline-block;
-    margin-bottom: 8px;
-    margin-top: 18px;
-}
 
-.product-information span span {
-    color: #FE980F;
-    float: left;
-    font-family: 'Roboto', sans-serif;
-    font-size: 30px;
-    font-weight: 700;
-    margin-right: 20px;
-    margin-top: 0px;
-}
 
 .product-information span input {
     border: 1px solid #DEDEDC;

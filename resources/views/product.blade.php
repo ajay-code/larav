@@ -78,17 +78,36 @@
 
                                 <p><b>Category:</b>{{ $product->subcategory->name }}</p>
 
-                                <p><b>Bids:</b> Open</p>
+                                <p><b>Total Bids:</b> {{ $product->bids->count() }} </p>
 
-                                <span>
-									<span>US ${{ $product->budget }}</span>
-								</span>
-                                <p>By: {{ $product->user->name }}</p>
+								<p><span class="budget">US ${{ $product->budget }}</span></p>
+                                <p><i class="fa fa-user-circle orange"></i> {{ $product->user->name }}</p>
 
                                 @can('bid', $product)
                                         @if(! $product->madeBid(Auth::user()))
                                             <bid-form slug="{{ $product->slug }}" ></bid-form>
                                         @endif
+                                @endcan
+
+                                @can('update', $product)
+                                    <div class="bid">
+                                    <h4>Proposals</h4>
+                                    
+                                    @foreach ($product->bids as $bid)
+                                        <div class="bid__item">
+                                            <p>Message: {{ nl2br($bid->message) }}</p>
+                                            <div class="row">
+                                                <div class="col-xs-8">
+                                                    <span class="margin-right-20">Budget: ${{ $bid->budget }}</span>
+                                                </div>
+                                                <div> 
+                                                   <i class="fa fa-user-circle"></i>
+                                                    {{ $bid->seller->name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    </div>
                                 @endcan
 
                             </div><!--/product-information-->

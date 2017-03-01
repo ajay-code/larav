@@ -4,7 +4,7 @@
            <div class="col-md-5">
               <!-- Logo -->
               <div class="logo">
-                 <h1><a href="index.html">Admin Area</a></h1>
+                 <h1><a href="{{ url('admin/home') }}">Admin Area</a></h1>
               </div>
            </div>
            <div class="col-md-5">
@@ -28,7 +28,7 @@
                       <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ Auth::user()->name }} <b class="caret"></b></a>
                         <ul class="dropdown-menu animated fadeInUp">
-                          <li><a href="profile.html">Profile</a></li>
+                          <li><a href="#">Profile</a></li>
                           <li>
                               <a href="{{ url('/admin/logout') }}"
                                   onclick="event.preventDefault();

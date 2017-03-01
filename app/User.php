@@ -29,12 +29,19 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public static function boot()
-    {
-        parent::boot();
-        User::created(function ($user) {
+    protected $appends = [
+        'total',
+        'completed'
+    ];
 
-        });
+    public function getTotalAttribute()
+    {
+        return $this->products->count();
+    }
+
+    public function getCompletedAttribute()
+    {
+        return $this->products()->where('order_completed', true)->get()->count();
     }
 
     public function confirmEmail()

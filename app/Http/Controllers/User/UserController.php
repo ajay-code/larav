@@ -37,9 +37,8 @@ class UserController extends Controller
         $user = auth()->user();
         $notifications = $user->notifications()->get();
         $user->unreadNotifications->markAsRead();
-        // $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product');
-        // return $bid;
-        return view('user.notifications', compact('notifications'));
+        $type = 'all';
+        return view('user.notifications', compact('notifications', 'type'));
     }
 
     public function showUnreadNotifications()
@@ -47,17 +46,15 @@ class UserController extends Controller
         $user = auth()->user();
         $notifications = $user->unreadNotifications()->get();
         $user->unreadNotifications->markAsRead();
-        // $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product');
-        // return $bid;
-        return view('user.notifications', compact('notifications'));
+        $type = 'unread';
+        return view('user.notifications', compact('notifications', 'type'));
     }
 
-    public function showSingleNotification($notification)
+
+    public function profile()
     {
-        $user = auth()->user();
-        $notification = $user->notifications()->where('id', $notification)->first();
-        // return $notification;
-        return view('user.shownotification', compact('notification'));
+        $user = Auth::user();
+        return view('user.profile', compact('user')); 
     }
 
 

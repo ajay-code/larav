@@ -44,12 +44,24 @@
         <div class="col-md-5">
             <div class="row" v-if="user">
                 <div class="col-md-12">
+                <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <img :src="this.avatar" alt="avatar" class="avatar"> <span v-text="user.name"></span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <p><b>Email: </b><span v-text="this.user.email"></span></p>
+                    <p><b>Created at:  </b><span v-text="this.createdAt"></span></p>
+                    <p><b>Total Wishes: </b> <span v-text="this.user.total"></span></p>
+                    <p><b>Completed Wishes: </b> <span v-text="this.user.completed"></span></p>
+                </div>
+                </div>
 
                 </div>
             </div>
         </div>
     </div>
-
 
 @endsection
 
@@ -60,11 +72,18 @@
             data: {
                 user: ''
             },
+            computed: {
+                avatar: function(){
+                    return this.user.profile_picture || '/storage/avatar/gray.png'
+                },
+                createdAt: function(){
+                    return moment(this.user.created_at).format('MMMM Do YYYY');
+                }
+            },
             methods: {
                 getDetail: function (id) {
                     axios.get('api/user/' + id).then(res => {
                         this.user = res.data;
-                        console.log(res.data);
                     })
                 }
             }

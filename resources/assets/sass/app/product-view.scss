@@ -33,3 +33,33 @@
 		color:#FE980F;
 	}
 }
+
+.product-information {
+    border: 1px solid #F7F7F0;
+    overflow: hidden;
+    padding-bottom: 40px;
+    padding-left: 40px;
+    padding-top: 40px;
+    padding-right: 20px;
+    position: relative;
+}
+.product-information span.budget {
+    display: inline-block;
+    margin: 5px 0;
+    color: #FE980F;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.bid{
+	padding: 10px
+}
+
+.bid__item{
+	margin: 5px 0;
+}
+
+.margin-right-20{
+	margin-right: 20px;
+}

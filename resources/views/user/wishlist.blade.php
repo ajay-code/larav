@@ -39,14 +39,10 @@
                                     <span class="pull-right">
                                         
                                         <span >
-                                        close Wish
                                         <a href="{{ url('wish/'.$product->id.'/completed') }}"
                                                        onclick="event.preventDefault();
                                                                      document.getElementById('wish-completed-form').submit();">
-                                                        <span class="fa-stack fa-lg">
-                                                          <i class="fa fa-square fa-stack-2x"></i>
-                                                          <i class="fa fa-check fa-stack-1x fa-inverse"></i>
-                                                        </span>
+                                                          <i class="fa fa-check"></i>
                                                     </a>
 
                                                     <form id="wish-completed-form" action="{{ url('wish/'.$product->id.'/completed') }}" method="POST" style="display: none;">
@@ -58,10 +54,7 @@
                                             <i class="fa fa-edit"></i>
                                         </a> --}}
                                         <a href="{{ url('wish/'.$product->id.'/edit') }}" aria-label="edit">
-                                            <span class="fa-stack fa-lg">
-                                              <i class="fa fa-square fa-stack-2x"></i>
-                                              <i class="fa fa-edit fa-stack-1x fa-inverse"></i>
-                                            </span>
+                                              <i class="fa fa-edit "></i>
                                         </a>
 
                                     </span>
@@ -69,7 +62,7 @@
 
                                 </div>
                                 <div class="wish-title">
-                                    <h3>{{ $product->title }}.</h3>
+                                    <h3><a class="title" href="{{ url('products/'.$product->slug) }}">{{ $product->title }}.</a></h3>
                                 </div>
                                 <div class="wish-desc">
                                     {!! nl2br(Str::words($product->description, 20)) !!}
@@ -81,6 +74,7 @@
                                     <div class="wish-budget">
                                         <i class="fa fa-money"></i><span> {{ $product->budget }} </span>
                                     </div>
+                                    <p><b>Total Bids:</b> {{ $product->bids->count() }} </p>
                                     <div class="wish-timings">
                                         <span><i class="fa fa-clock-o"></i> {{ $product->created_at->diffForHumans() }}</span>
                                     </div>
