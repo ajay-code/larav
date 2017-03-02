@@ -11,6 +11,8 @@
 
                 <div class="col-sm-9 padding-right">
                     <div class="product-details"><!--product-details-->
+                    @if ($product)
+                        
                         <div class="col-sm-5">
                                     <div id="slider" class="flexslider">
                                       <ul class="slides">
@@ -113,6 +115,9 @@
                             </div><!--/product-information-->
                         </div>
                     </div><!--/product-details-->
+                    @else
+                        <h3>This Product Does not Exist</h3>
+                    @endif
 
 
                 </div>

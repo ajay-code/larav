@@ -32,6 +32,40 @@ class UserController extends Controller
     }
 
     /**
+     * Deactivate the user
+     *
+     * @param  \App\User $user
+     * @return \Illuminate\Http\Response
+     */
+    public function deactivate(User $user)
+    {
+        $user->isActive = false;
+        $user->products->each(function($product){
+            $product->deactivated = true;
+            $product->save();
+        });
+        $user->save();
+        return $user;
+    }
+
+    /**
+     * Activate the user
+     *
+     * @param  \App\User $user
+     * @return \Illuminate\Http\Response
+     */
+    public function activate(User $user)
+    {
+        $user->isActive = true;
+        $user->products->each(function($product){
+            $product->deactivated = false;
+            $product->save();
+        });
+        $user->save();
+        return $user;
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\User $user

@@ -47,14 +47,18 @@
                 <div class="content-box-large">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <img :src="this.avatar" alt="avatar" class="avatar"> <span v-text="user.name"></span>
+                        <img :src="avatar" alt="avatar" class="avatar"> <span v-text="user.name"></span>
                     </div>
                 </div>
                 <div class="panel-body">
-                    <p><b>Email: </b><span v-text="this.user.email"></span></p>
+                    <p><b>Email: </b><span v-text="user.email"></span></p>
+                    <p v-if="user.country"><b>Country: </b><span v-text="user.country"></span></p>
+                    <p v-if="user.city"><b>city: </b><span v-text="user.city"></span></p>
                     <p><b>Created at:  </b><span v-text="this.createdAt"></span></p>
                     <p><b>Total Wishes: </b> <span v-text="this.user.total"></span></p>
                     <p><b>Completed Wishes: </b> <span v-text="this.user.completed"></span></p>
+                    <button v-if="user.isActive" @click="deactivate" class="btn btn-danger">Deactivate</button>
+                    <button v-if="!user.isActive" @click="activate" class="btn btn-primary">Activate</button>
                 </div>
                 </div>
 
@@ -85,6 +89,16 @@
                     axios.get('api/user/' + id).then(res => {
                         this.user = res.data;
                     })
+                },
+                activate: function(){
+                    axios.get('api/user/' + this.user.id + '/activate').then(res => {
+                        this.user = res.data;
+                    })
+                },
+                deactivate: function(){
+                  axios.get('api/user/' + this.user.id + '/deactivate').then(res => {
+                        this.user = res.data;
+                    })  
                 }
             }
 

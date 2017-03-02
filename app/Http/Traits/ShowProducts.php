@@ -12,7 +12,7 @@ trait ShowProducts
     public function showProducts()
     {
 
-        $products = Product::with('photos', 'user')->latest()->paginate(12);
+        $products = Product::with('photos', 'user')->active()->latest()->paginate(12);
 
         return view('products', compact('products'));
     }
@@ -23,7 +23,7 @@ trait ShowProducts
     {
         $category = Category::where('slug', $categorySlug)->first();
 
-        $products = $category->products()->latest()->paginate(12);
+        $products = $category->products()->active()->latest()->paginate(12);
 
         return view('productsby.category', compact('category', 'products'));
     }
@@ -33,7 +33,7 @@ trait ShowProducts
     {
         $subcategory = Subcategory::where('slug', $subcategorySlug)->first();
 
-        $products = Product::where('subcategory_id', $subcategory->id)->with('photos', 'user')->latest()->paginate(12);
+        $products = Product::where('subcategory_id', $subcategory->id)->active()->with('photos', 'user')->latest()->paginate(12);
 
         return view('productsby.subcategory', compact('products', 'subcategory'));
     }
@@ -42,7 +42,7 @@ trait ShowProducts
     public function tagProducts($tag)
     {
 
-        $products = Product::withAnyTag([$tag])->with('photos')->latest()->paginate(12);
+        $products = Product::withAnyTag([$tag])->active()->with('photos')->latest()->paginate(12);
 
         return view('productsby.tag', compact('products', 'tag'));
     }
@@ -51,7 +51,7 @@ trait ShowProducts
     public function show($slug)
     {
 
-        $product = Product::where('slug', $slug)->with('user', 'subcategory', 'photos')->first();
+        $product = Product::where('slug', $slug)->active()->with('user', 'subcategory', 'photos')->first();
 
         return view('product', compact('product'));
     }

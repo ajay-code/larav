@@ -82,6 +82,10 @@ class Product extends Model
     {
         $query->orderBy('created_at', 'asc');
     }
+    public function scopeActive($query)
+    {
+        return $query->where('order_completed', false)->where('deactivated', false);
+    }
 
     public function searchableAs()
     {

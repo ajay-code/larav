@@ -85,6 +85,7 @@ return [
     'unique'               => 'The :attribute has already been taken.',
     'uploaded'             => 'The :attribute failed to upload.',
     'url'                  => 'The :attribute format is invalid.',
+    'old_password' => 'The password does not match your current password',
 
     /*
     |--------------------------------------------------------------------------
@@ -99,7 +100,7 @@ return [
 
     'custom' => [
         'attribute-name' => [
-            'rule-name' => 'custom-message',
+            'rule-name' => 'custom-message'
         ],
     ],
 

@@ -21,3 +21,5 @@ Route::delete('subcategory/{id}', 'Admin\SubCategoryController@destroy');
  *  User Api Routes
  */
 Route::get('user/{user}', 'Admin\UserController@show');
+Route::get('user/{user}/deactivate', 'Admin\UserController@deactivate');
+Route::get('user/{user}/activate', 'Admin\UserController@activate');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -80,8 +81,28 @@ class LoginController extends Controller
     {
         $credentials = $request->only($this->username(), 'password');
         $credentials['verified'] = true;
-        $credentials['isActive'] = true;
         return $credentials;
+    }
+
+    /**
+     * Send the response after the user was authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+    
+        $request->session()->regenerate();
+        if(!Auth::user()->isActive){
+            Auth::logout();
+            alert()->info('your account is dectivated, Please contact info@example.com')->persistent('Close');
+            return redirect()->home();
+        }
+        $this->clearLoginAttempts($request);
+
+        return $this->authenticated($request, $this->guard()->user())
+                ?: redirect()->intended($this->redirectPath());
     }
 
 }

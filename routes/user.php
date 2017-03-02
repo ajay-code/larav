@@ -2,6 +2,12 @@
 
 /*User Profile*/
 Route::get('/profile', 'User\UserController@profile');
+Route::get('/profile/edit', 'User\UserController@editProfile');
+Route::post('/profile/edit', 'User\UserController@changeProfile');
+/*Change Password*/
+Route::get('/password/change', 'User\PasswordController@change');
+Route::post('/password/change', 'User\PasswordController@update');
+
 /*Adding Product To The DataBase*/
 Route::get('/addwish', 'User\ProductController@create');
 Route::post('/addWish', 'User\ProductController@store');

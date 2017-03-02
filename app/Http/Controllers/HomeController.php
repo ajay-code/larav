@@ -22,11 +22,11 @@ class HomeController extends Controller
     public function index()
     {
 
-        $products = Product::with('photos', 'user')->latest()->take(10)->get();
+        $products = Product::with('photos', 'user')->active()->latest()->take(10)->get();
 
         $categories = Category::with('products4')->has('products4')->take(5)->get();
 
-        $random = Product::inRandomOrder()->limit(24)->get();
+        $random = Product::inRandomOrder()->active()->limit(24)->get();
 
         return view('index', compact('products', 'categories', 'random'));
     }

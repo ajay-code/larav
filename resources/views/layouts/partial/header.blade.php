@@ -65,6 +65,11 @@
                                         </a>
                                         <ul role="menu" class="sub-menu user-dropdown user-dropdown--shift-left">
                                             <li class="user-dropdoen__item">
+                                                <a href="{{ url('/profile') }}">
+                                                    <i class="fa fa-user-circle"></i> Profile
+                                                </a>
+                                            </li>
+                                            <li class="user-dropdoen__item">
                                                 <a href="{{ url('/logout') }}"
                                                    onclick="event.preventDefault();
                                                                  document.getElementById('logout-form').submit();">

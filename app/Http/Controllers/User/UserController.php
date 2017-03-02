@@ -57,6 +57,25 @@ class UserController extends Controller
         return view('user.profile', compact('user')); 
     }
 
+    public function editProfile()
+    {
+        $user = Auth::user();
+        return view('user.editprofile', compact('user')); 
+    }
+
+    public function changeProfile(Request $request)
+    {
+        // return $request->country;
+        Auth::user()->update([
+            'name' => $request->name,
+            'country' => $request->country,
+            'city' => $request->city
+        ]);
+
+        return back();
+        
+    }
+
 
 
     /*Complete the Wish*/

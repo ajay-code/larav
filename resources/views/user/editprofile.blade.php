@@ -12,50 +12,45 @@
                                     <div class="user-img thumbnail">
                                         <img src="{{ $user->getAvatar() }}" class="img-responsive">
                                     </div>
-
-                                    @if ($user->password)
-                                        <a href="{{ url('/password/change') }}">
-                                            <button class="btn btn-default btn-profile">Change Password</button>
-                                        </a>
-                                    @endif
+                                    <a href="{{ url('password/change') }}">
+                                        <button class="btn btn-default btn-profile">Change Password</button>
+                                    </a>
                                 </div>  
                                 <div class="col-sm-5 col-sm-offset-1">
+                                    
+                                    
+                                    <form action="{{ url('/profile/edit') }}" method="post">
+                                    {{ csrf_field() }}
                                     <div class="row margin-default">
                                         <p class="label-pattern">Name</p>
-                                        <p>{{ $user->name }}</p>
+                                        <p></p>
+                                        <input type="text" name="name" class="form-control profile-input" value="{{ $user->name }}">
                                     </div>
-                                    <div class="row margin-default">
-                                        <p class="label-pattern">Email</p>
-                                        <p>{{ $user->email }}</p>
-                                    </div>
-                                        @if($user->city)
-                                            <div class="row margin-default">
-                                                <p class="label-pattern">Country</p>
-                                                {{ $user->country }}
-                                            </div>
-                                        @endif
-                                        @if($user->city)
-                                            <div class="row margin-default">
-                                                <p class="label-pattern">City</p>
-                                                {{ $user->city }}
-                                            </div>
-                                        @endif
+                                        <div class="row margin-default">
+                                            <p class="label-pattern">Country</p>
+                                            <input type="text" name="country" class="form-control profile-input" value="{{ $user->country }}">
+                                        </div>
+                                        <div class="row margin-default">
+                                            <p class="label-pattern">City</p>
+                                            <input type="text" name="city" class="form-control profile-input" value="{{ $user->city }}">
+                                        </div>
                                         <div class="row margin-default">
                                             <a href="{{ url('/profile/edit') }}">
-                                                <button class="btn btn-default btn-profile pull-left">Edit</button>
+                                                <button type="Submit" class="btn btn-default btn-profile pull-left">Edit</button>
                                             </a>
                                         </div>
+                                    </form>
                                     <!-- <div class="row margin-default pass-con">
                                         <button class="btn btn-default btn-profile">Change Password</button>
                                         <form id="changePass">
                                             <div class="form-group">
-                                                <input type="text" class="form-control profile-input" placeholder="Old password"></input>
+                                                <input type="text" class="form-control profile-input" placeholder="Old password">
                                             </div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control profile-input" placeholder="New Password"></input>
+                                                <input type="text" class="form-control profile-input" placeholder="New Password">
                                             </div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control profile-input" placeholder="Confirm Password"></input>
+                                                <input type="text" class="form-control profile-input" placeholder="Confirm Password">
                                             </div>
                                             <button class="btn btn-default btn-profile">Submit</button>
                                         </form>

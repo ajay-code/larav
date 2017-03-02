@@ -16,6 +16,7 @@
                             <th>Budget</th>
                             <th>By</th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -25,9 +26,17 @@
                                 <td>{{ $product->title }}</td>
                                 <td>{{ $product->budget }}</td>
                                 <td>{{ $product->user->name }}</td>
+                                <td></td>
                                 <td>
                                     <a href="{{ url('/products/'.$product->slug) }}"
                                     >{{ 'Detail...' }}</a>
+                                </td>
+                                <td>
+                                    @if (!$product->deactivated)
+                                        <a href="{{ url('/admin/products/'.$product->id.'/deactivate') }}"><button class="btn btn-danger btn-sm">Deactivate</button></a>
+                                    @else
+                                        <a href="{{ url('/admin/products/'.$product->id.'/activate') }}"><button class="btn btn-primary btn-sm">Activate</button></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -42,3 +51,18 @@
 
 @endsection
 
+@section('scripts')
+    <script>
+        new Vue({
+            el: '#user',
+            data: {
+                user: ''
+            },
+        
+            methods: {
+                
+            }
+
+        });
+    </script>
+@endsection
