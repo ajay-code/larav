@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\User;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -40,10 +41,9 @@ class UserController extends Controller
     public function deactivate(User $user)
     {
         $user->isActive = false;
-        $user->products->each(function($product){
-            $product->deactivated = true;
-            $product->save();
-        });
+        Product::where('user_id', $user->id)
+            ->where('deactivated', false)
+            ->update(['deactivated' => true]);
         $user->save();
         return $user;
     }
@@ -57,45 +57,11 @@ class UserController extends Controller
     public function activate(User $user)
     {
         $user->isActive = true;
-        $user->products->each(function($product){
-            $product->deactivated = false;
-            $product->save();
-        });
+        Product::where('user_id', $user->id)
+            ->where('deactivated', true)
+            ->update(['deactivated' => false]);
         $user->save();
         return $user;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\User $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\User $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
 }
