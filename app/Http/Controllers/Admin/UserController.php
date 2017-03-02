@@ -40,11 +40,10 @@ class UserController extends Controller
      */
     public function deactivate(User $user)
     {
-        $user->isActive = false;
+        $user->update(['isActive' => false]);
         Product::where('user_id', $user->id)
             ->where('deactivated', false)
             ->update(['deactivated' => true]);
-        $user->save();
         return $user;
     }
 
@@ -56,11 +55,10 @@ class UserController extends Controller
      */
     public function activate(User $user)
     {
-        $user->isActive = true;
+        $user->update(['isActive' => true]);
         Product::where('user_id', $user->id)
             ->where('deactivated', true)
             ->update(['deactivated' => false]);
-        $user->save();
         return $user;
     }
 
