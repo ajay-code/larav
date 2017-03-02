@@ -6,6 +6,8 @@ use App\User;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Notifications\ProductDeactivated;
+use Illuminate\Support\Facades\Notification;
 
 class ProductController extends Controller
 {
@@ -53,6 +55,7 @@ class ProductController extends Controller
     {
         $product->deactivated = true;
         $product->save();
+        Notification::send($product->user, new ProductDeactivated($product));
         return back();
     }
 

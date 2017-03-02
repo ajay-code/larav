@@ -10,6 +10,7 @@
                     <h3 class="notifications__header">{{ $type == 'unread' ? 'Unread Notifications': 'All Notifications'}}</h3>
 
                     @foreach($notifications as $notification)
+                        @if (isset($notification->data['bid']))
                         @if( $bid = \App\Models\Bid::find($notification->data['bid'])->load('seller', 'product'))
                             
                             <div class="col-sm-6 each-noti">
@@ -32,6 +33,11 @@
                                 </div>
                             </div>
 
+                        @endif
+                        @else
+                            <div class="col-sm-6 each-noti">
+                                {!! $notification->data['message'] !!}
+                            </div>
                         @endif
                     @endforeach
                     

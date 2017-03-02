@@ -48,7 +48,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ url('/notifications') }}">
+                                    <a href="{{ url('/notifications/unread') }}">
                                         <i class="fa fa-bell">
                                             @if(auth()->user()->unreadNotifications ->count() > 0)
                                                 <span class="notification-count">
