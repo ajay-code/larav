@@ -20,6 +20,11 @@ class User extends Authenticatable
         'name', 'email', 'password', 'verified', 'profile_picture', 'country', 'city', 'isActive'
     ];
 
+    protected $casts = [
+    'isActive' => 'boolean',
+    'verified' => 'boolean'
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
