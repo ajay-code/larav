@@ -58,7 +58,7 @@
                     <p><b>Total Wishes: </b> <span v-text="this.user.total"></span></p>
                     <p><b>Completed Wishes: </b> <span v-text="this.user.completed"></span></p>
                     <button v-if="user.isActive" @click="deactivate" class="btn btn-danger">Deactivate</button>
-                    <button v-if="!user.isActive" @click="activate" class="btn btn-primary">Activate</button>
+                    <button v-else @click="activate" class="btn btn-primary">Activate</button>
                 </div>
                 </div>
 

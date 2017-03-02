@@ -54,6 +54,12 @@ class SocialLoginController extends Controller
 
         Auth::login($user, false);
 
+        if(!Auth::user()->isActive){
+            Auth::logout();
+            alert()->info('your account is dectivated, Please contact info@example.com')->persistent('Close');
+            return redirect()->home();
+        }
+
         return redirect()->intended();
     }
 
