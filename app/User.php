@@ -8,7 +8,6 @@ use Laravel\Scout\Searchable;
 use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
 class User extends Authenticatable
 {
     use Notifiable, Messagable, Searchable;
@@ -99,8 +98,22 @@ class User extends Authenticatable
     {
         return $this->hasOne(ActivationToken::class);
     }
-
-
+    
+/* Searching */
+    public function searchableAs()
+    {
+        return 'users_index';   
+    }
+    public function toSearchableArray()
+    {
+        $arr = $this->toArray();
+        $array = [
+            'id' => $arr['id'],
+            'name' => $arr['name'],
+            'email' => $arr['email']
+        ];
+        return $array;
+    }
 
 
 }
