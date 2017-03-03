@@ -4,12 +4,14 @@ namespace App;
 
 use App\Models\Bid;
 use App\Models\Product;
+use Laravel\Scout\Searchable;
 use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
 class User extends Authenticatable
 {
-    use Notifiable, Messagable;
+    use Notifiable, Messagable, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +50,8 @@ class User extends Authenticatable
     {
         return $this->products()->where('order_completed', true)->get()->count();
     }
+
+    
 
     public function confirmEmail()
     {
@@ -95,6 +99,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(ActivationToken::class);
     }
+
+
 
 
 }

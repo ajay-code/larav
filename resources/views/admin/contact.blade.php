@@ -67,7 +67,7 @@
             },
             methods: {
                 getDetail: function (id) {
-                    axios.get('contact/' + id).then(res => {
+                    axios.get('contacts/' + id).then(res => {
                         this.contact = res.data;
                     })
                 }
