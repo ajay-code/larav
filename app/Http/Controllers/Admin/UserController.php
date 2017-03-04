@@ -39,7 +39,7 @@ class UserController extends Controller
      */
     public function search(Request $request)
     {
-        $users = User::search($request->input('q'))->paginate(12);
+        $users = User::search($request->input('query'))->paginate(12);
         return view('admin.user', compact('users'));
     }
 

@@ -12,7 +12,7 @@
                 <div class="col-lg-6">
                     <form action="{{ url('/admin/search') }}">
                           <div class="input-group form">
-                               <input type="text" class="form-control" name="q" placeholder="Search Products...">
+                               <input type="text" class="form-control" name="query" placeholder="Search Products...">
                                <span class="input-group-btn">
                                  <button class="btn btn-primary" type="submit">Search</button>
                                </span>
@@ -22,7 +22,7 @@
                 <div class="col-lg-6">
                     <form action="{{ url('/admin/users/search') }}">
                           <div class="input-group form">
-                               <input type="text" class="form-control" name="q" placeholder="Search Users...">
+                               <input type="text" class="form-control" name="query" placeholder="Search Users...">
                                <span class="input-group-btn">
                                  <button class="btn btn-primary" type="submit">Search</button>
                                </span>
