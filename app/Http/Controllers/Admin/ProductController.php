@@ -31,7 +31,6 @@ class ProductController extends Controller
     {
         $products = Product::search($request->input('q'))->paginate(12);
         $products->load('photos', 'user');
-
         return view('admin.products', compact('products'));
     }
 

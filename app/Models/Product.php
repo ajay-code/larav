@@ -87,10 +87,7 @@ class Product extends Model
         return $query->where('order_completed', false)->where('deactivated', false);
     }
 
-    public function searchableAs()
-    {
-        return 'products_index';   
-    }
+
 
     public function madeBid($user = null)
     {
@@ -104,6 +101,23 @@ class Product extends Model
         }
 
         return false;
+    }
+
+
+    public function searchableAs()
+    {
+        return 'products_index';   
+    }
+
+    public function toSearchableArray()
+    {
+        $arr = $this->toArray();
+        $array = [
+            'id' => $arr['id'],
+            'title' => $arr['title'],
+            'budget' => $arr['budget']
+        ];
+        return $array;
     }
 
 
