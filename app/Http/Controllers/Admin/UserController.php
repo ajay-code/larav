@@ -33,6 +33,17 @@ class UserController extends Controller
     }
 
     /**
+     * Display a listing of the product according to query.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $users = User::search($request->input('q'))->paginate(12);
+        return view('admin.user', compact('users'));
+    }
+
+    /**
      * Deactivate the user
      *
      * @param  \App\User $user

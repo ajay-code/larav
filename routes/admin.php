@@ -23,3 +23,4 @@ Route::get('/contacts/{contact}', 'Admin\ContactController@show');
 
 /*Routes For Contact Info*/
 Route::get('/users', 'Admin\UserController@index');
+Route::get('users/search', 'Admin\UserController@search');

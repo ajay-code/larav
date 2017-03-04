@@ -1,18 +1,28 @@
 <div class="header">
      <div class="container">
         <div class="row">
-           <div class="col-md-5">
+           <div class="col-md-2">
               <!-- Logo -->
               <div class="logo">
                  <h1><a href="{{ url('admin/home') }}">Admin Area</a></h1>
               </div>
            </div>
-           <div class="col-md-5">
+           <div class="col-md-8">
               <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <form action="{{ url('/admin/search') }}">
                           <div class="input-group form">
-                               <input type="text" class="form-control" name="q" placeholder="Search...">
+                               <input type="text" class="form-control" name="q" placeholder="Search Products...">
+                               <span class="input-group-btn">
+                                 <button class="btn btn-primary" type="submit">Search</button>
+                               </span>
+                          </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <form action="{{ url('/admin/users/search') }}">
+                          <div class="input-group form">
+                               <input type="text" class="form-control" name="q" placeholder="Search Users...">
                                <span class="input-group-btn">
                                  <button class="btn btn-primary" type="submit">Search</button>
                                </span>
