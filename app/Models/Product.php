@@ -115,7 +115,8 @@ class Product extends Model
         $array = [
             'id' => $arr['id'],
             'title' => $arr['title'],
-            'budget' => $arr['budget']
+            'budget' => $arr['budget'],
+            'description' => $arr['description'],
         ];
         return $array;
     }
