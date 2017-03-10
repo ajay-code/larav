@@ -34,4 +34,5 @@ new Vue({
 
 
 
- autosize(document.querySelectorAll('*[data-autosize]'));
+require('cropperjs');
+require('./vendor/uploadImage');

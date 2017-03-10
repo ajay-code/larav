@@ -46,11 +46,12 @@
 }
 
 .user-img{
-	height: 200px;
+	max-height: 400px;
 	display: flex;
   	align-items: center;
-  	justify-content: center
+  	justify-content: center;
 }
 
 .user-img img{
+    max-width: 100%;
 }

@@ -67,7 +67,10 @@ class User extends Authenticatable
     public function getAvatar()
     {
         if ($this->profile_picture) {
-            return $this->profile_picture;
+            if (filter_var($this->profile_picture, FILTER_VALIDATE_URL)) { 
+                return $this->profile_picture;
+            }
+            return getStorageUrl($this->profile_picture);
         }
 
         return '//www.gravatar.com/avatar/' . md5($this->email) . '?s=50&d=mm';

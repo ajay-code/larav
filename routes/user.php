@@ -4,6 +4,8 @@
 Route::get('/profile', 'User\UserController@profile');
 Route::get('/profile/edit', 'User\UserController@editProfile');
 Route::post('/profile/edit', 'User\UserController@changeProfile');
+Route::post('/profile/photo', 'User\UserProfileController@updateAvatar');
+
 /*Change Password*/
 Route::get('/password/change', 'User\PasswordController@change');
 Route::post('/password/change', 'User\PasswordController@update');

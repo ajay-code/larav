@@ -9,10 +9,11 @@
                             </h2>
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <div class="user-img thumbnail">
+                                    <div class="user-img">
                                         <img src="{{ $user->getAvatar() }}" class="img-responsive">
                                     </div>
-
+                                    <br>
+                                    <button id="upload-pic-button" class="btn btn-block btn-default" data-toggle="modal" data-target="#upload-pic">Change</button>
                                     @if ($user->password)
                                         <a href="{{ url('/password/change') }}">
                                             <button class="btn btn-default btn-profile">Change Password</button>
@@ -45,21 +46,7 @@
                                                 <button class="btn btn-default btn-profile pull-left">Edit</button>
                                             </a>
                                         </div>
-                                    <!-- <div class="row margin-default pass-con">
-                                        <button class="btn btn-default btn-profile">Change Password</button>
-                                        <form id="changePass">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control profile-input" placeholder="Old password"></input>
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" class="form-control profile-input" placeholder="New Password"></input>
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" class="form-control profile-input" placeholder="Confirm Password"></input>
-                                            </div>
-                                            <button class="btn btn-default btn-profile">Submit</button>
-                                        </form>
-                                    </div> -->
+                                    
                                 </div>  
                                 <div class="col-sm-3 wishs-info-con">
                                     <div class="wishs-info">
@@ -84,4 +71,34 @@
 
     <br>
     <br>
+
+    {{-- Upload Picture Model --}}
+
+<div id="upload-pic" class="modal fade ">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Upload Picture</h4>
+      </div>
+      <div class="modal-body">
+                <div class="img-container" >
+                    <img id="image" src="{{ $user->getAvatar() }}" alt="">
+                </div>
+                <label class="btn btn-primary btn-upload" for="inputImage" title="Upload image file">
+                    <input type="file" class="sr-only" id="inputImage" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff">
+                    <span class="docs-tooltip" data-toggle="tooltip" title="Import image with Blob URLs">
+                      <span class="fa fa-upload"> Upload</span>
+                    </span>
+                </label>
+                <span id="photo-upload-url" data-url="{{ url('/profile/photo') }}"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button id="upload-to-server" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
