@@ -6,8 +6,5 @@
 Homestead.json
 Homestead.yaml
 .env
-.idea/workspace.xml
 .idea/*
 webpack.mix.js
-/storage/products_index.index
-storage/products_index.index

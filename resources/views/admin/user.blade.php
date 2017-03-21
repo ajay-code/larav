@@ -86,7 +86,7 @@
             },
             methods: {
                 getDetail: function (id) {
-                    axios.get('api/user/' + id).then(res => {
+                    axios.get('/admin/api/user/' + id).then(res => {
                         this.user = res.data;
                     })
                 },
@@ -98,7 +98,7 @@
                 deactivate: function(){
                   axios.get('api/user/' + this.user.id + '/deactivate').then(res => {
                         this.user = res.data;
-                    })  
+                    })
                 }
             }
 
