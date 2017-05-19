@@ -14,6 +14,7 @@ require('./boot/bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+/* Vuejs Configration */
 // Vue.config.debug = false;
 // Vue.config.silent = true;
 
